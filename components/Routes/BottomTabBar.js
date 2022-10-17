@@ -15,7 +15,7 @@ import Octicons from "react-native-vector-icons/Octicons";
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabBar = () => {
+const BottomTabBar = ({navigation}) => {
 
   return (
     <Tab.Navigator initialRouteName='Home'>
