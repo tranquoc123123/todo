@@ -34,29 +34,31 @@ const LoginScreen = ({ navigation }) => {
         event.preventDefault()
         if (submit) {
             setIsLoading(true);
-            const res = await axiosIntance.post('auth/signin', {
-                username: username,
+            const res = await axiosIntance.post('user/login', {
+                email: username,
                 password: password
-            }).catch(error => {
-                
+            }).then(async(res)=>{
+                console.log(res.data.user);
+                await updateToken(res.data.token);
+                await AsyncStorage.setItem('token', res.data.token)
+                await AsyncStorage.setItem('user', res.data.user)
+                await userCtx.setUser(res.data.user);
+                await console.log('login with user: ' + res.data.user)
+            }).
+            catch(error => {
             // console.log(JSON.stringify(error));
-            if (error.response.status === 403) {
-                setMessage('Email or password is invalid');
-            }else {
-                setMessage(error.message);
-            }
+            // if (error.response.status === 403) {
+            //     setMessage('Email or password is invalid');
+            // }else {
+            //     setMessage(error.message);
+            // }
+            setMessage(error.message);
             // console.log('error status: ');
             // console.log(error.response.status);
             setError(true); 
             setIsLoading(false) })
 
             setIsLoading(false);
-            console.log(res.data.user.username);
-            await updateToken(res.data.token);
-            await AsyncStorage.setItem('token', res.data.token)
-            await AsyncStorage.setItem('user', res.data.user.username)
-            await userCtx.setUser(res.data.user.username);
-            await console.log('login with user: ' + res.data.user.username)
         }
     };
 

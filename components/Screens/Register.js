@@ -37,7 +37,7 @@ const Register = ({ navigation }) => {
         return reg.test(Inusername)
     };
     const validateEmail = (Inemail) => {
-        const reg = /\S+@\S+\.\S+/
+        const reg = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
         return reg.test(Inemail);
     };
     const validatePassword = (Inpassword) => {
@@ -82,25 +82,37 @@ const Register = ({ navigation }) => {
                 setError(true);
                 setIsLoading(false);
             } else{
-                const res = await axiosIntance.post('auth/signup', {
+                const res = await axiosIntance.post('user/sign-up', {
                     username: username,
                     password: password,
                     email: email,
+                    role: 'user'
+                }).then(async(res)=>{
+                    const resLogin = await axiosIntance.post('user/login', {
+                        email: email,
+                        password: password
+                    }).then(async(res)=>{
+                        await updateToken(res.data);
+                        // console.log('resLogin.token: ' + resLogin.token);
+                        await AsyncStorage.setItem('token', res.data);
+                        await AsyncStorage.setItem('user', username);
+                        await userCtx.setUser('user', username);
+                        //console.log(res.data);
+                        await setIsLoading(false);
+                        }
+                    ).catch(error => {
+                    setMessage(error.message);
+                    if (error.response.status === 409) {
+                        setMessage('Email is already in use');
+                    }else {
+                        setMessage(error.message);
+                    }
+                    setError(true); 
+                    setIsLoading(false)});
                 }).catch(error => {
                     setMessage(error.message);
                     setError(true); 
                     setIsLoading(false)});
-                const resLogin = await axiosIntance.post('auth/signin', {
-                    username: username,
-                    password: password
-                }).catch(error => {
-                    setMessage(error.message);
-                    setError(true); 
-                    setIsLoading(false)});
-                await updateToken(resLogin.token);
-                console.log('resLogin.token: ' + resLogin.token);
-                await AsyncStorage.setItem('token', resLogin.token);
-                await userCtx.setUser(resLogin.data.user.username);
             }
         }
     };
@@ -163,7 +175,7 @@ const Register = ({ navigation }) => {
                         onEndEditing={
                             HandlerEndEditting
                         }
-                        maxLength={20}
+                        maxLength={50}
                     />
 
                 </View>
