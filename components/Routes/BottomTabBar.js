@@ -11,18 +11,19 @@ import Profile from '../Screens/Profile';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from "react-native-vector-icons/Octicons";
+import MainStack from "./MainStack";
 
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabBar = ({navigation}) => {
+const BottomTabBar = () => {
 
   return (
     <Tab.Navigator initialRouteName='Home'>
 
       <Tab.Screen
-        name={'Home'}
-        component={Home}
+        name={'Main'}
+        component={MainStack}
         options={{
           tabBarIcon: () => (<MaterialIcons name={'home-filled'} color={'gray'} size={32} />)
         }}

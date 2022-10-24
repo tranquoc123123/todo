@@ -2,15 +2,19 @@ import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback } fr
 import React, {useEffect} from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-const TaskCard = ({days, progress, title, id, type, bgc}) => {
+
+
+const TaskCard = ({days, progress, title, id, type, bgc, onPress}) => {
+   
 // let progressNum = 100;
 // progressNum = progress;
 // useEffect(() => {
 //     // progressNum = progress;
 // }, [])
+
   const prg = progress/100;
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
         <View style={[styles.container,{backgroundColor: bgc}]}>
             <View style={styles.header}>
                 <View style = {styles.time}>
