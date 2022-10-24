@@ -42,10 +42,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent:"space-between",
         alignItems:'center',
-        height: 40,
+        height: 50,
         width: "100%",
-        borderWidth: 0.25,
-        borderRadius: 25,
+        borderWidth: 0.1,
+        borderRadius: 10,
         paddingVertical: 5,
         paddingHorizontal: 20,
         marginBottom: 7
@@ -67,10 +67,12 @@ const styles = StyleSheet.create({
     },
     text:{
         fontSize:14,
-        color: '#006EE9'
+        color: '#006EE9',
+        fontWeight: 'bold'
     },
     text1:{
         fontSize:14,
+        fontWeight: 'bold'
         // color: '#006EE9'
     }
 })
