@@ -27,13 +27,16 @@ const Register = ({ navigation }) => {
     const [message, setMessage] = useState('');
     const [submit, setSubmit] = useState(false);
     const [error, setError] = useState(false);
+    const [login, setLogin] = useState(false);
     const userCtx = useContext(AuthContext);
     const nav = useNavigation();
+    let userNameLogin  = null;
+    let tokenLogin = null;
     const gotoLogin = () => {
         nav.navigate("Login");
     }
     const validateUsername = (Inusername) => {
-        const reg = /^[a-z0-9_-]{3,15}$/;
+        const reg = /^[a-zA-Z0-9_-]{3,15}$/;
         return reg.test(Inusername)
     };
     const validateEmail = (Inemail) => {
@@ -53,19 +56,19 @@ const Register = ({ navigation }) => {
     const validating = async () => {
         let err = true;
         if (await !validateUsername(username)) {
-            setMessage('USER NAME IS INVALID, INPUT AGAIN');
+            setMessage('User name is invalid, input again!');
             err = false;
         }
         if (err && await !validateEmail(email)) {
-            setMessage('EMAIL ADDRESS IS INVALID, INPUT AGAIN');
+            setMessage('Email is invalid, input again!');
             err = false;
         }
         if (err && await !validatePassword(password)) {
-            setMessage('PASSWORD IS INVALID, INPUT AGAIN');
+            setMessage('Password is invalid, input again!');
             err = false;
         }
         if (err && await !validatePasswordcfm(password, passwordcfm)) {
-            setMessage('PASSWORD CONFIRM NOT MATCH');
+            setMessage('Confirm password is not match, input again! ');
             err = false;
         }
         if (err) {
@@ -73,7 +76,10 @@ const Register = ({ navigation }) => {
         }
         return err;
     }
-
+    const handleLogin = async() =>{
+        setLogin(false);
+        await userCtx.setUser('user', AsyncStorage.getItem('user'));
+    }
     const handbleSubmit = async () => {
         setIsLoading(true);
         if (submit) {
@@ -94,26 +100,26 @@ const Register = ({ navigation }) => {
                     }).then(async(res)=>{
                         await updateToken(res.data);
                         // console.log('resLogin.token: ' + resLogin.token);
-                        await AsyncStorage.setItem('token', res.data);
-                        await AsyncStorage.setItem('user', username);
-                        await userCtx.setUser('user', username);
+                        await AsyncStorage.setItem('token', res.data.token);
+                        await AsyncStorage.setItem('user', res.data.user);
+                        //await userCtx.setUser('user', res.data.user);
                         //console.log(res.data);
+                        await setLogin(true);
                         await setIsLoading(false);
                         }
-                    ).catch(error => {
-                    setMessage(error.message);
+                    )
+                }).catch(error => {
+                    // setMessage(error.message);
                     if (error.response.status === 409) {
-                        setMessage('Email is already in use');
+                        setMessage(' Email is already in use');
                     }else {
-                        setMessage(error.message);
+                        setMessage( ' ' + error.message);
                     }
                     setError(true); 
                     setIsLoading(false)});
-                }).catch(error => {
-                    setMessage(error.message);
-                    setError(true); 
-                    setIsLoading(false)});
             }
+        } else {
+            setIsLoading(false);
         }
     };
     const HandlerEndEditting = () => {
@@ -242,12 +248,24 @@ const Register = ({ navigation }) => {
                 visible={error}
                 title="Error log"
                 onTouchOutside={()=>setError(false)} >
-                    <View>
+                    <View style={{flexDirection:'row'}}>
+                        <Icon name="minus-circle" color="red" size={20} />
                         <Text >
                             {message}
                         </Text>
                         {/* <Button title="OK" style ={{marginRight: 0, width: "10%"}} onPress={()=>setError(false)} /> */}
                     </View>
+                </Dialog>
+                <Dialog
+                visible={login}
+                title=""
+                onTouchOutside={()=>handleLogin()} 
+                >
+                    <View style={{flexDirection: 'row', marginBottom: 20}}>
+                        <Text > Sign up is success ! </Text>
+                        <Icon name="check-circle" color="green" size={20} />
+                    </View>
+                    <Button onPress={()=>handleLogin()} title ="OK" containerStyle={{marginVertical: 30}} />
                 </Dialog>
             </View>
         </KeyboardAwareScrollView>

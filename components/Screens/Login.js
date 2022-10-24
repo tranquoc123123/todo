@@ -52,7 +52,7 @@ const LoginScreen = ({ navigation }) => {
             // }else {
             //     setMessage(error.message);
             // }
-            setMessage(error.message);
+            setMessage(' Email or password is invalid!');
             // console.log('error status: ');
             // console.log(error.response.status);
             setError(true); 
@@ -144,7 +144,8 @@ const LoginScreen = ({ navigation }) => {
             visible={error}
             title="Error log"
             onTouchOutside={()=>setError(false)} >
-            <View>
+            <View style = {{flexDirection:'row'}}>
+                <Icon name="minus-circle" color="red" size={20} />
                 <Text >
                     {message}
                 </Text>

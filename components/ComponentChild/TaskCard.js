@@ -4,8 +4,8 @@ import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 
-const TaskCard = ({days, progress, title, id, type, bgc, onPress}) => {
-   
+
+const TaskCard = ({days, progress, title, id, type, bgc, icon, onPress}) => {
 // let progressNum = 100;
 // progressNum = progress;
 // useEffect(() => {
@@ -22,7 +22,8 @@ const TaskCard = ({days, progress, title, id, type, bgc, onPress}) => {
                 </View>
             </View>
             <View style={styles.content}>
-                <Text style ={{fontSize: 16, color: '#ffffff'}}>{title}</Text>
+                <Icon name= {icon} color='#ffffff' size={20} />
+                <Text style ={{fontSize: 16, color: '#ffffff'}}>{'  '}{title}</Text>
             </View>
             <View style={styles.footer}>
                 <Text style={{fontSize: 10, color: '#ffffff'}}> Progress </Text>
@@ -53,6 +54,7 @@ const styles = StyleSheet.create({
         flex: 3,
         alignItems: 'center',
         justifyContent:'center',
+        flexDirection: 'row'
     },
     footer: {
         flex: 2,
