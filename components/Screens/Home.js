@@ -1,13 +1,11 @@
 
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView, AnimatedFlatList, SafeAreaView, RefreshControl} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView, AnimatedFlatList} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import TaskCard from "../ComponentChild/TaskCard";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from "../StyleSheet/color";
 import IndexTask from "../ComponentChild/IndexTask";
-import axiosIntance from "../../apis/axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 const data = [
   {
     title: 'Design UI',
@@ -84,50 +82,31 @@ const data1 = [
   },
 ] 
 
-
 const taskCard = ({ item }) => {
-  let bgc = '#006EE9'
-  let icon = 'briefcase'
-  switch(item.level) {
-    case 'normal':
+  let bgc = '#ffffff'
+  switch(item.type) {
+    case '0':
       bgc = '#006EE9';
       break;
     
-    case 'urgent':
+    case '1':
       bgc = '#311F65';
       break;
 
-    case 'important':
+    case '3':
       bgc = '#D92C2C';
       break;
 
     default:
       bgc = '#006EE9';
-  }
-  switch(item.type) {
-    case '0':
-      icon = 'briefcase';
-      break;
-    
-    case '1':
-      icon = 'code';
-      break;
-
-    case '2':
-      icon = 'laptop-code';
-      break;
-
-    default:
-      icon = 'briefcase';
     }
   return (
-      <TaskCard key={item._id}
+      <TaskCard key={item.id}
           title={item.title}
-          progress={item.process }
-          id={item._id}
+          progress={item.progress}
+          id={item.id}
           bgc={bgc}  
-          days={'20'}
-          icon={icon}
+          days={item.days}
           />
   )
 }
@@ -144,68 +123,25 @@ const indexTask = ({ item }) => {
 
 
 const Home = ({navigation}) => {
-  const [dataTask, setDataTask] = useState([]);
-  const [username, setUserName] = useState(null);
-  const [date, setDate] = useState(null);
-
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const wait = (timeout) => {
-    return new Promise(resolve => setTimeout(resolve, timeout));
-  }
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
+  // const [dataTask, setDataTask] = useState([]);
 
   // const navigation = useNavigation();
-
-
-  const getTask = async (id) => {
-    const res = await axiosIntance.get("/todo" , {
-        // params:{
-        //     id: "62fbcb17e8588f32cbea05b7"
-        // }
-    }).then(
-        res => {
-          setDataTask(res.data)
-           console.log(res.data)
-        }
-    ).catch(error => {
-        console.log(error)
-    }).finally(() => {
-        // setIsLoading(false)
-    });
-  }
-  const IntLoad = async()=>{
-    let user = await AsyncStorage.getItem('user');
-    await setUserName(user);  
-    await setDate(new Date().toDateString())
-  }
-
   useEffect(() => {
     navigation.setOptions({
         headerShown: false,
     });
-    IntLoad();
-    getTask();
     // setDataTask(data);
 }, [])
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={{flex: 1}}          refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />} >
+    <View style={styles.container}>
       <View style={styles.header}>
-        <Text>{date}</Text>
+        <Text>Thursday, October 20 2022</Text>
         <View>
           <Icon name="bell" color={color.Primary} size={20} />
         </View>
       </View>
       <View style={styles.header1}>
-        <Text style={{fontSize: 24, fontFamily: 'Poppins', color: 'black', fontWeight:'bold'}}>Welcome {username}</Text>
+        <Text style={{fontSize: 24, fontFamily: 'Poppins', color: 'black', fontWeight:'bold'}}>Welcome Phillip</Text>
         <Text style={{fontSize: 16, fontFamily: 'Poppins', color: '#474747' }}>Have a nice day !</Text>
       </View>
       <View style={styles.cardContainer1} >
@@ -214,9 +150,9 @@ const Home = ({navigation}) => {
             style={styles.cardList}
             horizontal
             pagingEnabled={false}
-            data={dataTask}
+            data={data}
             renderItem={taskCard}
-            keyExtractor={(item) => item._id}
+            keyExtractor={(item) => item.id}
           />
       </View>
       <View style={styles.cardContainer2}>
@@ -227,7 +163,7 @@ const Home = ({navigation}) => {
             pagingEnabled={false}
             data={data1}
             renderItem={indexTask}
-            keyExtractor={(item) => item._id}
+            keyExtractor={(item) => item.id}
           />
       </View>
       {/* <View>
@@ -242,8 +178,8 @@ const Home = ({navigation}) => {
           </Text>
         </TouchableOpacity>
       </View> */}
-    </ScrollView>
-    </SafeAreaView>
+
+    </View>
   )
 }
 
@@ -260,7 +196,6 @@ const styles = StyleSheet.create({
   },
   header1: {
     flex: 1,
-    marginVertical: 20
     // marginBottom: 5
   },
   content: {
