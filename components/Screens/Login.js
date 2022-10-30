@@ -47,17 +47,16 @@ const LoginScreen = ({ navigation }) => {
             }).
             catch(error => {
             // console.log(JSON.stringify(error));
-            // if (error.response.status === 403) {
-            //     setMessage('Email or password is invalid');
-            // }else {
-            //     setMessage(error.message);
-            // }
-            setMessage(' Email or password is invalid!');
+            if (error.response.status === 409) {
+                setMessage('Email or password is invalid');
+            }else {
+                setMessage(error.message);
+            }
+            //setMessage(' Email or password is invalid!');
             // console.log('error status: ');
             // console.log(error.response.status);
             setError(true); 
-            setIsLoading(false) })
-
+            setIsLoading(false)})
             setIsLoading(false);
         }
     };

@@ -11,37 +11,42 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const data = [
   {
     title: 'Design UI',
-    progress: 80,
+    process: 80,
     days: 10,
     id: 1,
+    level: 'normal',
     type: '0'
   },
   {
     title: 'Laravel',
-    progress: 60,
+    process: 60,
     days: 10,
     id: 2,
+    level: 'normal',
     type: '1'
   },
   {
     title: 'Task 3',
-    progress: 0,
+    process: 0,
     days: 10,
     id: 3,
+    level: 'normal',
     type: '3'
   },
   {
     title: 'Task 4',
-    progress: 10,
+    process: 10,
     days: 10,
     id: 4,
+    level: 'normal',
     type: '2'
   },
   {
     title: 'Task 5',
-    progress: 60,
+    process: 60,
     days: 10,
     id: 5,
+    level: 'normal',
     type: '1'
   },
 ] 
@@ -85,9 +90,13 @@ const data1 = [
 ] 
 
 
+
+
 const taskCard = ({ item }) => {
   let bgc = '#006EE9'
   let icon = 'briefcase'
+
+
   switch(item.level) {
     case 'normal':
       bgc = '#006EE9';
@@ -120,6 +129,7 @@ const taskCard = ({ item }) => {
     default:
       icon = 'briefcase';
     }
+
   return (
       <TaskCard key={item._id}
           title={item.title}
@@ -147,7 +157,7 @@ const Home = ({navigation}) => {
   const [dataTask, setDataTask] = useState([]);
   const [username, setUserName] = useState(null);
   const [date, setDate] = useState(null);
-
+  const nav = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
 
   const wait = (timeout) => {
@@ -161,7 +171,7 @@ const Home = ({navigation}) => {
   // const navigation = useNavigation();
 
 
-  const getTask = async (id) => {
+  const getTask = async () => {
     const res = await axiosIntance.get("/todo" , {
         // params:{
         //     id: "62fbcb17e8588f32cbea05b7"
@@ -170,6 +180,20 @@ const Home = ({navigation}) => {
         res => {
           setDataTask(res.data)
            console.log(res.data)
+        }
+    ).catch(error => {
+        console.log(error)
+    }).finally(() => {
+        // setIsLoading(false)
+    });
+    const res1 = await axiosIntance.get("/todo" , {
+      // params:{
+      //     id: "62fbcb17e8588f32cbea05b7"
+      // }
+    }).then(
+        res => {
+          setDataTask(res.data)
+          console.log(res.data)
         }
     ).catch(error => {
         console.log(error)
@@ -189,7 +213,7 @@ const Home = ({navigation}) => {
     });
     IntLoad();
     getTask();
-    // setDataTask(data);
+    setDataTask(data);
 }, [])
   return (
     <SafeAreaView style={styles.container}>
@@ -201,15 +225,15 @@ const Home = ({navigation}) => {
       <View style={styles.header}>
         <Text>{date}</Text>
         <View>
-          <Icon name="bell" color={color.Primary} size={20} />
+          <Icon name="bell" color={color.Secondary} size={20} />
         </View>
       </View>
       <View style={styles.header1}>
-        <Text style={{fontSize: 24, fontFamily: 'Poppins', color: 'black', fontWeight:'bold'}}>Welcome {username}</Text>
-        <Text style={{fontSize: 16, fontFamily: 'Poppins', color: '#474747' }}>Have a nice day !</Text>
+        <Text style={{fontSize: 24, fontFamily: 'Poppins', color: color.Primary, fontWeight:'bold'}}>Welcome {username}</Text>
+        <Text style={{fontSize: 16, fontFamily: 'Poppins', color: 'gray' }}>Have a nice day !</Text>
       </View>
       <View style={styles.cardContainer1} >
-        <Text style={{fontSize: 20, fontFamily: 'Poppins', color: 'black', fontWeight:'bold'}} >My Priority Task</Text> 
+        <Text style={{fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight:'bold'}} >My Priority Task</Text> 
           <FlatList
             style={styles.cardList}
             horizontal
@@ -220,7 +244,7 @@ const Home = ({navigation}) => {
           />
       </View>
       <View style={styles.cardContainer2}>
-        <Text style={{fontSize: 20, fontFamily: 'Poppins', color: 'black', fontWeight:'bold', marginBottom: 10}} >Daily Task</Text>
+        <Text style={{fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight:'bold', marginBottom: 10}} >Daily Task</Text>
         {/* <TaskCard /> */}
         <FlatList
             style={styles.IndexList}
@@ -230,18 +254,6 @@ const Home = ({navigation}) => {
             keyExtractor={(item) => item._id}
           />
       </View>
-      {/* <View>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text>
-            Login
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text>
-            Register
-          </Text>
-        </TouchableOpacity>
-      </View> */}
     </ScrollView>
     </SafeAreaView>
   )
@@ -265,8 +277,6 @@ const styles = StyleSheet.create({
   },
   content: {
     height: "100%",
-    // flexGrow :1,
-    // marginTop: 20
   },
   footer: {
       flex: 2,

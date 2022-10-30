@@ -17,6 +17,7 @@ export default function App() {
   },[user]);
 
   const getInit = async() =>{
+    // await AsyncStorage.setItem("user", "quoctk");
     await AsyncStorage.getItem("user").then((value) => {
       setUser(value);
     });
@@ -26,8 +27,9 @@ export default function App() {
   return (
     <AuthContext.Provider value={{user: user, setUser:setUser}}>
      <NavigationContainer>
-        {user && <BottomTabBar  navigation ={ {headerShown: false}} />}
-        {!user && <StackScreens />}
+        {/* {user && <BottomTabBar  navigation ={ {headerShown: false}} />}
+        {!user && <StackScreens  />} */}
+        <StackScreens/>
      </NavigationContainer>
      </AuthContext.Provider>
 

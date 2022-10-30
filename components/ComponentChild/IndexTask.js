@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback, Pre
 import React, {useEffect, useState} from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import color from '../StyleSheet/color';
 const IndexTask = ({status, title, id, type, bgc}) => {
     const [isSelect, setSelect] = useState(status);
 // let progressNum = 100;
@@ -27,7 +28,7 @@ const handlePress = () =>{
                     height: 20,
                     width: 20,
                     borderRadius: 10,
-                    backgroundColor: '#006EE9',
+                    backgroundColor: color.Primary,
                   }} />
                   : null
               }
@@ -61,13 +62,13 @@ const styles = StyleSheet.create({
         width: 26,
         borderRadius: 15,
         borderWidth: 2,
-        borderColor: '#006EE9',
+        borderColor: color.Primary,
         alignItems: 'center',
         justifyContent: 'center',
     },
     text:{
         fontSize:14,
-        color: '#006EE9',
+        color: color.Primary,
         fontWeight: 'bold'
     },
     text1:{

@@ -136,6 +136,7 @@ android {
 
     defaultConfig {
         applicationId "com.todoapp"
+        multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -277,6 +278,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    implementation 'com.android.support:multidex:1.0.3' 
 }
 
 if (isNewArchitectureEnabled()) {
