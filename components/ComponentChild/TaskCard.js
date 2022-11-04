@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native'
 
 
-const TaskCard = ({days, progress, title, id, type, bgc, icon, onPress}) => {
+const TaskCard = ({key, days, progress, title, id, bgc, icon}) => {
 // let progressNum = 100;
 // progressNum = progress;
 // useEffect(() => {

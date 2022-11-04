@@ -12,6 +12,7 @@ const handbleLogout = async () => {
     await updateToken(null);
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('user');
+    await AsyncStorage.removeItem('userId');
     await userCtx.setUser(null);
 };
   return (

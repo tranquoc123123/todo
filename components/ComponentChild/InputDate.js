@@ -2,53 +2,37 @@ import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback, Pre
 import React, {useEffect, useState} from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import DatePicker from 'react-native-date-picker';
+import color from '../StyleSheet/color';
 
-
-const InputDate = () => {
-    const [date, setDate] = useState(new Date());
+const InputDate = ({date, onPress}) => {
     return (
-      <SafeAreaView style={styles.container}>
-        <Pressable style={styles.container}>
-            {/* <DatePicker
-            value={new Date(2018, 12, 31)}
-            defaultDate={new Date(2018, 4, 4)}
-            minimumDate={new Date(2018, 1, 1)}
-            maximumDate={new Date(2018, 12, 31)}
-            locale={"en"}
-            timeZoneOffsetInMinutes={undefined}
-            modalTransparent={false}
-            animationType={"fade"}
-            androidMode={"default"}
-            placeHolderText="Select date"
-            textStyle={{ color: "green" }}
-            placeHolderTextStyle={{ color: "#d3d3d3" }}
-            onDateChange={this.setDate}
-            disabled={false}
-            /> */}
+      <TouchableOpacity style={styles.container} onPress={onPress}>
+        <View style={styles.input}  >
+          <Icon name="calendar-alt" color={color.Primary} size={20} />
+          <Text>{"  "}{date}</Text>
+        <Text/>
 
-        </Pressable>
-      </SafeAreaView>
+        </View>
+      </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 10,
+      padding: 2,
       justifyContent: 'center',
       alignItems: 'center',
+      borderWidth: 0.2,
+      borderRadius: 3,
+      marginRight: 10,
+      height: 50,
+      borderColor: color.Primary
+
     },
-    title: {
-      textAlign: 'center',
-      fontSize: 20,
-      fontWeight: 'bold',
-      padding: 20,
-    },
-    datePickerStyle: {
-      width: 200,
-      marginTop: 20,
-    },
+    input: {
+        flexDirection:"row"
+    }
   });
 
 export default InputDate;

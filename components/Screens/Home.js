@@ -6,16 +6,39 @@ import TaskCard from "../ComponentChild/TaskCard";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from "../StyleSheet/color";
 import IndexTask from "../ComponentChild/IndexTask";
-import axiosIntance from "../../apis/axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import axiosIntance from '../../apis/axios';
 const data = [
   {
     title: 'Design UI',
     process: 80,
     days: 10,
     id: 1,
-    level: 'normal',
-    type: '0'
+    level: 'urgency',
+    iconType: '0',
+    startdate:'2022-10-25T00:00:00.000Z',
+    enddate:'2022-10-25T00:00:00.000Z',
+    listItem: [
+      {
+        complete: "yes",
+        title: "Reactnative",
+        description: "tạo giao diện"
+      },
+      {
+        complete: "yes",
+        title: "Reactnative",
+        description: "tạo giao diện"
+      },
+      {
+        complete: "no",
+        title: "Reactnative",
+        description: "tạo giao diện"
+      },
+      {
+        complete: "yes",
+        title: "Reactnative",
+        description: "tạo giao diện"
+      }
+    ]
   },
   {
     title: 'Laravel',
@@ -23,15 +46,19 @@ const data = [
     days: 10,
     id: 2,
     level: 'normal',
-    type: '1'
+    iconType: '1',
+    startdate:'2022-10-17T00:00:00.000Z',
+    enddate:'2022-10-18T00:00:00.000Z',
   },
   {
     title: 'Task 3',
     process: 0,
     days: 10,
     id: 3,
-    level: 'normal',
-    type: '3'
+    level: 'important',
+    iconType: '3',
+    startdate:'2022-10-17T00:00:00.000Z',
+    enddate:'2022-10-25T00:00:00.000Z',
   },
   {
     title: 'Task 4',
@@ -39,7 +66,9 @@ const data = [
     days: 10,
     id: 4,
     level: 'normal',
-    type: '2'
+    iconType: '2',
+    startdate:'2022-10-17T00:00:00.000Z',
+    enddate:'2022-10-25T00:00:00.000Z',
   },
   {
     title: 'Task 5',
@@ -47,7 +76,9 @@ const data = [
     days: 10,
     id: 5,
     level: 'normal',
-    type: '1'
+    iconType: '1',
+    startdate:'2022-10-17T00:00:00.000Z',
+    enddate:'2022-10-25T00:00:00.000Z',
   },
 ] 
 
@@ -95,49 +126,72 @@ const data1 = [
 const taskCard = ({ item }) => {
   let bgc = '#006EE9'
   let icon = 'briefcase'
+  let days = 1
+  let totalItem = 0;
+  let totalItemFinished = 0;
+  let progress = 0
+  if (item.enddate && item.enddate){
+    try {
+      let msDiff = new Date(item.enddate).getTime() - new Date(item.startdate).getTime();
+      days = Math.floor(msDiff / (1000 * 60 * 60 * 24))+1;
+    } catch (error) {
+      days = 0
+    }
 
+  }
+  if (item.listItem) {
+    totalItem = item.listItem.length;
+    totalItemFinished = item.listItem.filter(item =>{
+      if(item.complete.toUpperCase() ==="YES"){
+        return true;
+      }
+    }).length;
+    progress = (totalItemFinished/totalItem)*100;
+    console.log(totalItemFinished);
+  }; 
+  
+  
 
-  switch(item.level) {
-    case 'normal':
+  switch(item.level.toUpperCase()) {
+    case 'NORMAL':
       bgc = '#006EE9';
       break;
     
-    case 'urgent':
+    case 'URGENCY':
       bgc = '#311F65';
       break;
 
-    case 'important':
+    case 'IMPORTANT':
       bgc = '#D92C2C';
       break;
 
     default:
       bgc = '#006EE9';
-  }
-  switch(item.type) {
+    }
+  switch(item.iconType) {
     case '0':
       icon = 'briefcase';
       break;
     
     case '1':
-      icon = 'code';
+      icon = 'book';
       break;
 
-    case '2':
-      icon = 'laptop-code';
+    case '3':
+      icon = 'pencil-ruler';
       break;
 
     default:
       icon = 'briefcase';
     }
-
   return (
-      <TaskCard key={item._id}
+      <TaskCard key={item.id}
           title={item.title}
-          progress={item.process }
-          id={item._id}
-          bgc={bgc}  
-          days={'20'}
+          id={item.id}
           icon={icon}
+          bgc={bgc}  
+          days={days}
+          progress={progress}
           />
   )
 }
@@ -172,6 +226,7 @@ const Home = ({navigation}) => {
 
 
   const getTask = async () => {
+    axios.defaults.headers.common["userId"] = "6353914e9cfcaa7479f8d09e";
     const res = await axiosIntance.get("/todo" , {
         // params:{
         //     id: "62fbcb17e8588f32cbea05b7"
@@ -211,19 +266,23 @@ const Home = ({navigation}) => {
     navigation.setOptions({
         headerShown: false,
     });
-    IntLoad();
-    getTask();
-    setDataTask(data);
+    // IntLoad();
+    // getTask();
+    // setDataTask(dâta);
 }, [])
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={{flex: 1}}          refreshControl={
+    <SafeAreaView style={styles.container} >
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-          />} >
+          />
+        }
+      >
       <View style={styles.header}>
-        <Text>{date}</Text>
+        <Text>Thursday, October 20 2022</Text>
         <View>
           <Icon name="bell" color={color.Secondary} size={20} />
         </View>
@@ -238,9 +297,9 @@ const Home = ({navigation}) => {
             style={styles.cardList}
             horizontal
             pagingEnabled={false}
-            data={dataTask}
+            data={data}
             renderItem={taskCard}
-            keyExtractor={(item) => item._id}
+            keyExtractor={(item) => item.id}
           />
       </View>
       <View style={styles.cardContainer2}>
@@ -251,7 +310,7 @@ const Home = ({navigation}) => {
             pagingEnabled={false}
             data={data1}
             renderItem={indexTask}
-            keyExtractor={(item) => item._id}
+            keyExtractor={(item) => item.id}
           />
       </View>
     </ScrollView>
@@ -268,12 +327,12 @@ const styles = StyleSheet.create({
     flex: 0.75,
     flexDirection: "row",
     justifyContent:"space-between",
-    marginVertical: 10
+    marginVertical: 20
   },
   header1: {
     flex: 1,
-    marginVertical: 20
     // marginBottom: 5
+    marginVertical: 30
   },
   content: {
     height: "100%",

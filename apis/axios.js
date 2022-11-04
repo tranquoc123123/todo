@@ -11,4 +11,12 @@ export const updateToken = jwt => {
         return config
     });
 }
+
+export const updateHeaderId = id => {
+    axiosIntance.interceptors.request.use(config => {
+        config.headers.id = id;
+        return config
+    });
+}
+
 export default axiosIntance;

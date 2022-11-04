@@ -27,9 +27,9 @@ export default function App() {
   return (
     <AuthContext.Provider value={{user: user, setUser:setUser}}>
      <NavigationContainer>
-        {/* {user && <BottomTabBar  navigation ={ {headerShown: false}} />}
-        {!user && <StackScreens  />} */}
-        <StackScreens/>
+        {user && <BottomTabBar  navigation ={ {headerShown: false}} />}
+        {!user && <StackScreens  />}
+        {/* <StackScreens/> */}
      </NavigationContainer>
      </AuthContext.Provider>
 
