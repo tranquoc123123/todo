@@ -12,6 +12,7 @@ import { AntDesign } from '@expo/vector-icons';
 import Logo from '../ComponentChild/logo';
 import color from './../StyleSheet/color';
 import { Dialog } from 'react-native-simple-dialogs';
+import DialogCustom from "../ComponentChild/Dialog";
 const LoginScreen = ({ navigation }) => {
     useEffect(() => {
         navigation.setOptions({
@@ -140,18 +141,11 @@ const LoginScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <Dialog
+            <DialogCustom
             visible={error}
-            title="Error log"
-            onTouchOutside={()=>setError(false)} >
-            <View style = {{flexDirection:'row'}}>
-                <Icon name="minus-circle" color="red" size={20} />
-                <Text >
-                    {message}
-                </Text>
-                {/* <Button title="OK" style ={{marginRight: 0, width: "10%"}} onPress={()=>setError(false)} /> */}
-            </View>
-            </Dialog>
+            message={message}
+            onPressHandle={()=>setError(false)}
+            />
         </KeyboardAwareScrollView>
 
 

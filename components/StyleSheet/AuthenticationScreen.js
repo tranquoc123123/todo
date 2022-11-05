@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  signInBtn : {
+  signInBtn: {
     borderColor: 'black',
     borderWidth: 1,
-    
+
   }
 })
 

@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
     color: 'white',
     fontSize: 18,
-    
+
 
   },
   addBtn: {

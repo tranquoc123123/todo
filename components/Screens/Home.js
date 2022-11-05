@@ -1,6 +1,6 @@
 
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView, AnimatedFlatList, SafeAreaView, RefreshControl} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView, AnimatedFlatList, SafeAreaView, RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import TaskCard from "../ComponentChild/TaskCard";
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -15,10 +15,10 @@ const taskCard = ({ item }) => {
   let totalItem = 0;
   let totalItemFinished = 0;
   let progress = 0
-  if (item.enddate && item.startdate){
+  if (item.enddate && item.startdate) {
     try {
       let msDiff = new Date(item.enddate).getTime() - new Date(item.startdate).getTime();
-      days = Math.floor(msDiff / (1000 * 60 * 60 * 24))+1;
+      days = Math.floor(msDiff / (1000 * 60 * 60 * 24)) + 1;
     } catch (error) {
       days = 0
     }
@@ -27,19 +27,19 @@ const taskCard = ({ item }) => {
   // console.log(item.list_item)
   if (item.list_item) {
     totalItem = item.list_item.length;
-    totalItemFinished = item.list_item.filter(item =>{
-      if(item.isComplete.toUpperCase() ==="YES"){
+    totalItemFinished = item.list_item.filter(item => {
+      if (item.isComplete.toUpperCase() === "YES") {
         return true;
       }
     }).length;
-    progress = ((totalItemFinished/totalItem)*100).toFixed(2);
+    progress = ((totalItemFinished / totalItem) * 100).toFixed(2);
     // console.log(totalItemFinished);
-  }; 
-  switch(item.level.toUpperCase()) {
+  };
+  switch (item.level.toUpperCase()) {
     case 'NORMAL':
       bgc = '#006EE9';
       break;
-    
+
     case 'URGENCY':
       bgc = '#311F65';
       break;
@@ -50,12 +50,12 @@ const taskCard = ({ item }) => {
 
     default:
       bgc = '#006EE9';
-    }
-  switch(item.iconType) {
+  }
+  switch (item.iconType) {
     case '0':
       icon = 'briefcase';
       break;
-    
+
     case '1':
       icon = 'book';
       break;
@@ -66,47 +66,47 @@ const taskCard = ({ item }) => {
 
     default:
       icon = 'briefcase';
-    }
+  }
   return (
-      <TaskCard key={item._id}
-          title={item.title}
-          id={item.id}
-          icon={icon}
-          bgc={bgc}  
-          days={days}
-          progress={progress}
-          />
+    <TaskCard key={item._id}
+      title={item.title}
+      id={item.id}
+      icon={icon}
+      bgc={bgc}
+      days={days}
+      progress={progress}
+    />
   )
 }
 
 const indexTask = ({ item }) => {
   const title = item.titleItem;
-  let  status = false;
+  let status = false;
   console.log(item.isComplete);
   if (item.isComplete.toUpperCase() === "YES") {
-    status  = true;
+    status = true;
   }
   return (
-      <IndexTask key={item._id}
-          title={title}
-          status={status}
-          id={item._id}
-          updateFunc={async(id, status)=>{
-            let isYes = "NO"
-            if (status) {
-              isYes = "YES"
-            }
-            const res = await axiosIntance.put('/item/'+id,{isComplete: isYes},{}).catch(err=>{
-              console.log(err);
-            })
-          }}
-          />
+    <IndexTask key={item._id}
+      title={title}
+      status={status}
+      id={item._id}
+      updateFunc={async (id, status) => {
+        let isYes = "NO"
+        if (status) {
+          isYes = "YES"
+        }
+        const res = await axiosIntance.put('/item/' + id, { isComplete: isYes }, {}).catch(err => {
+          console.log(err);
+        })
+      }}
+    />
   )
 }
 
 
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
   const [dataTask, setDataTask] = useState([]);
   const [dailyTask, setDailyTask] = useState([]);
   const [username, setUserName] = useState(null);
@@ -127,17 +127,17 @@ const Home = ({navigation}) => {
 
   const getTask = async () => {
     axiosIntance.defaults.headers.common["id"] = "6360986eab6b9925b4ceea2b";
-    const res = await axiosIntance.get("/todo" , {
-        // params:{
-        //     id: "62fbcb17e8588f32cbea05b7"
-        // }
+    const res = await axiosIntance.get("/todo", {
+      // params:{
+      //     id: "62fbcb17e8588f32cbea05b7"
+      // }
     }).then(
-        res => {
-          setDataTask(res.data)
-          setDailyTask(res.data[0].list_item)
-        }
+      res => {
+        setDataTask(res.data)
+        setDailyTask(res.data[0].list_item)
+      }
     ).catch(error => {
-        console.log(error)
+      console.log(error)
     }).finally(() => {
 
     });
@@ -156,19 +156,19 @@ const Home = ({navigation}) => {
     //     // setIsLoading(false)
     // });
   }
-  const IntLoad = async()=>{
+  const IntLoad = async () => {
     const user = await AsyncStorage.getItem('username');
-    await setUserName(user);  
+    await setUserName(user);
     await setDate(new Date().toDateString())
   }
 
   useEffect(() => {
     navigation.setOptions({
-        headerShown: false,
+      headerShown: false,
     });
     IntLoad();
     getTask();
-}, [])
+  }, [])
   return (
     <SafeAreaView style={styles.container} >
       <ScrollView
@@ -180,18 +180,18 @@ const Home = ({navigation}) => {
           />
         }
       >
-      <View style={styles.header}>
-        <Text>{new Date().toDateString()}</Text>
-        <View>
-          <Icon name="bell" color={color.Secondary} size={20} />
+        <View style={styles.header}>
+          <Text>{new Date().toDateString()}</Text>
+          <View>
+            <Icon name="bell" color={color.Secondary} size={20} />
+          </View>
         </View>
-      </View>
-      <View style={styles.header1}>
-        <Text style={{fontSize: 24, fontFamily: 'Poppins', color: color.Primary, fontWeight:'bold'}}>Welcome {username}</Text>
-        <Text style={{fontSize: 16, fontFamily: 'Poppins', color: 'gray' }}>Have a nice day !</Text>
-      </View>
-      <View style={styles.cardContainer1} >
-        <Text style={{fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight:'bold'}} >My Priority Task</Text> 
+        <View style={styles.header1}>
+          <Text style={{ fontSize: 24, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold' }}>Welcome {username}</Text>
+          <Text style={{ fontSize: 16, fontFamily: 'Poppins', color: 'gray' }}>Have a nice day !</Text>
+        </View>
+        <View style={styles.cardContainer1} >
+          <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold' }} >My Priority Task</Text>
           <FlatList
             style={styles.cardList}
             horizontal
@@ -200,19 +200,19 @@ const Home = ({navigation}) => {
             renderItem={taskCard}
             keyExtractor={(item) => item.id}
           />
-      </View>
-      <View style={styles.cardContainer2}>
-        <Text style={{fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight:'bold', marginBottom: 10}} >Daily Task</Text>
-        {/* <TaskCard /> */}
-        <FlatList
+        </View>
+        <View style={styles.cardContainer2}>
+          <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold', marginBottom: 10 }} >Daily Task</Text>
+          {/* <TaskCard /> */}
+          <FlatList
             style={styles.IndexList}
             pagingEnabled={false}
             data={dailyTask}
             renderItem={indexTask}
             keyExtractor={(item) => item.id}
           />
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   header: {
     flex: 0.75,
     flexDirection: "row",
-    justifyContent:"space-between",
+    justifyContent: "space-between",
     marginVertical: 20
   },
   header1: {
@@ -237,16 +237,16 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   footer: {
-      flex: 2,
-      marginHorizontal:  10
+    flex: 2,
+    marginHorizontal: 10
   },
   time: {
-      height: 20,
-      width: 48,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#ffffff',
-      borderRadius: 15
+    height: 20,
+    width: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 15
   },
   cardContainer1: {
     flex: 2.75,

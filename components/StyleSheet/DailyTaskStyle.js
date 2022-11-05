@@ -9,7 +9,7 @@ export default styles = StyleSheet.create({
   timeTitle: {
     flexDirection: "row",
     justifyContent: "space-between",
-    
+
   },
   title: {
     color: color.Primary,
@@ -19,7 +19,7 @@ export default styles = StyleSheet.create({
   timeInHour: {
     flexDirection: "row",
     justifyContent: "center",
-  
+
   },
   timeBlock: {
     height: 90,
@@ -29,7 +29,7 @@ export default styles = StyleSheet.create({
     margin: 8,
     justifyContent: "center",
     alignItems: "center"
-  
+
   },
   textBlock: {
     fontSize: 40,

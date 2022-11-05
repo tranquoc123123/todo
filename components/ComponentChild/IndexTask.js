@@ -1,51 +1,51 @@
 import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback, Pressable } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from '../StyleSheet/color';
-const IndexTask = ({status, title, id, type, bgc, updateFunc}) => {
+const IndexTask = ({ status, title, id, type, bgc, updateFunc }) => {
     const [isSelect, setSelect] = useState(status);
-// let progressNum = 100;
-// progressNum = progress;
-useEffect(() => {
-    setSelect(status)
-}, [])
-//   const prg = progress/100;
+    // let progressNum = 100;
+    // progressNum = progress;
+    useEffect(() => {
+        setSelect(status)
+    }, [])
+    //   const prg = progress/100;
 
-const handlePress = () =>{
-    let status = false;
-    {
-        isSelect ? status = false : status = true
+    const handlePress = () => {
+        let status = false;
+        {
+            isSelect ? status = false : status = true
+        }
+        setSelect(status);
+        updateFunc(id, status);
     }
-    setSelect(status);
-    updateFunc(id, status);
-}
-  return (
-    <Pressable onPress={handlePress}>
-        <View style={styles.container}>
-            <Text  style={isSelect? styles.text : styles.text1 } >{title}</Text>
-            <View style = {styles.circle}>
-            {
-                isSelect ?
-                  <View style={{
-                    height: 20,
-                    width: 20,
-                    borderRadius: 10,
-                    backgroundColor: color.Primary,
-                  }} />
-                  : null
-              }
+    return (
+        <Pressable onPress={handlePress}>
+            <View style={styles.container}>
+                <Text style={isSelect ? styles.text : styles.text1} >{title}</Text>
+                <View style={styles.circle}>
+                    {
+                        isSelect ?
+                            <View style={{
+                                height: 20,
+                                width: 20,
+                                borderRadius: 10,
+                                backgroundColor: color.Primary,
+                            }} />
+                            : null
+                    }
+                </View>
             </View>
-        </View>
-    </Pressable>
-  )
+        </Pressable>
+    )
 }
 
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
-        justifyContent:"space-between",
-        alignItems:'center',
+        justifyContent: "space-between",
+        alignItems: 'center',
         height: 50,
         width: "100%",
         borderWidth: 0.1,
@@ -69,13 +69,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    text:{
-        fontSize:14,
+    text: {
+        fontSize: 14,
         color: color.Primary,
         fontWeight: 'bold'
     },
-    text1:{
-        fontSize:14,
+    text1: {
+        fontSize: 14,
         fontWeight: 'bold'
         // color: '#006EE9'
     }

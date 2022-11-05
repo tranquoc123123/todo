@@ -21,33 +21,33 @@ const BottomTabBar = ({ navigation }) => {
 
   return (
     <Tab.Navigator initialRouteName='Home'
-    
-    screenOptions={{
-      tabBarStyle: {
-        height: 65,
-        paddingTop: 10,
-        borderTopWidth: 0,
-        backgroundColor: '#ffffff',
-        position: 'absolute',
-        elevation: 0,
-      },
-      tabBarLabelStyle: {
-        marginBottom: 5,
-        paddingBottom: 5,
-        fontSize: 10,
-        fontWeight: "bold",
-      },
-      tabBarActiveTintColor: color.Primary,
-      tabBarInactiveTintColor: 'gray',
-      headerShown: false
-    }}
+
+      screenOptions={{
+        tabBarStyle: {
+          height: 65,
+          paddingTop: 10,
+          borderTopWidth: 0,
+          backgroundColor: '#ffffff',
+          position: 'absolute',
+          elevation: 0,
+        },
+        tabBarLabelStyle: {
+          marginBottom: 5,
+          paddingBottom: 5,
+          fontSize: 10,
+          fontWeight: "bold",
+        },
+        tabBarActiveTintColor: color.Primary,
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false
+      }}
     >
 
       <Tab.Screen
         name={'Home'}
         component={MainStack}
         options={{
-          tabBarIcon: ({color}) => (<Icon name={'home'} color ={color} size={32} />)
+          tabBarIcon: ({ color }) => (<Icon name={'home'} color={color} size={32} />)
         }}
 
       />
@@ -56,7 +56,7 @@ const BottomTabBar = ({ navigation }) => {
         name={"My Day"}
         component={MyDay}
         options={{
-          tabBarIcon: ({color}) => (<Icon name={'calendar-alt'} color ={color} size={29} />)
+          tabBarIcon: ({ color }) => (<Icon name={'calendar-alt'} color={color} size={29} />)
 
         }}
 
@@ -73,7 +73,7 @@ const BottomTabBar = ({ navigation }) => {
         name={"User"}
         component={Profile}
         options={{
-          tabBarIcon: ({color}) => (<Icon name={'user-alt'} color ={color}  size={30} />)
+          tabBarIcon: ({ color }) => (<Icon name={'user-alt'} color={color} size={30} />)
         }}
 
       />

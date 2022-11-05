@@ -30,7 +30,7 @@ const Register = ({ navigation }) => {
     const [login, setLogin] = useState(false);
     const userCtx = useContext(AuthContext);
     const nav = useNavigation();
-    let userNameLogin  = null;
+    let userNameLogin = null;
     let tokenLogin = null;
     const gotoLogin = () => {
         nav.navigate("Login");
@@ -76,7 +76,7 @@ const Register = ({ navigation }) => {
         }
         return err;
     }
-    const handleLogin = async() =>{
+    const handleLogin = async () => {
         setLogin(false);
         await userCtx.setUser('user', AsyncStorage.getItem('user'));
     }
@@ -87,17 +87,17 @@ const Register = ({ navigation }) => {
             if (hasError === false) {
                 setError(true);
                 setIsLoading(false);
-            } else{
+            } else {
                 const res = await axiosIntance.post('user/sign-up', {
                     username: username,
                     password: password,
                     email: email,
                     role: 'user'
-                }).then(async(res)=>{
+                }).then(async (res) => {
                     const resLogin = await axiosIntance.post('user/login', {
                         email: email,
                         password: password
-                    }).then(async(res)=>{
+                    }).then(async (res) => {
                         await updateToken(res.data);
                         // console.log('resLogin.token: ' + resLogin.token);
                         await AsyncStorage.setItem('token', res.data.token);
@@ -106,17 +106,18 @@ const Register = ({ navigation }) => {
                         //console.log(res.data);
                         await setLogin(true);
                         await setIsLoading(false);
-                        }
+                    }
                     )
                 }).catch(error => {
                     // setMessage(error.message);
                     if (error.response.status === 409) {
                         setMessage(' Email is already in use');
-                    }else {
-                        setMessage( ' ' + error.message);
+                    } else {
+                        setMessage(' ' + error.message);
                     }
-                    setError(true); 
-                    setIsLoading(false)});
+                    setError(true);
+                    setIsLoading(false)
+                });
             }
         } else {
             setIsLoading(false);
@@ -131,7 +132,7 @@ const Register = ({ navigation }) => {
     }
     return (
         <KeyboardAwareScrollView style={styles.container} behavior="height" >
-            <TouchableOpacity style = {styles.buttonBack} onPress={()=>gotoLogin()}>
+            <TouchableOpacity style={styles.buttonBack} onPress={() => gotoLogin()}>
                 <Icon name="arrow-left" color="#ffffff" size={20} />
             </TouchableOpacity>
             <View style={styles.loginCont}>
@@ -142,10 +143,10 @@ const Register = ({ navigation }) => {
                 </View>
                 <Text style={styles.logoText3}> Create your account </Text>
                 <View style={styles.block}>
-                      <View style={styles.icon}>
+                    <View style={styles.icon}>
                         {/* <FontAwesome name="envelope-o" size={24} color="black" /> */}
                         <Icon name="user" color="#eee" size={20} />
-                      </View>
+                    </View>
                     <TextInput
                         placeholder="User Name"
                         placeholderTextColor="#b1b2b7"
@@ -187,7 +188,7 @@ const Register = ({ navigation }) => {
                 </View>
                 <View style={styles.block}>
                     <View style={styles.icon}>
-                      <Icon name="lock" color="#eee" size={20} />
+                        <Icon name="lock" color="#eee" size={20} />
                     </View>
                     <TextInput
                         placeholder="Password"
@@ -236,7 +237,7 @@ const Register = ({ navigation }) => {
 
                     }
                 </Pressable>
-                <Text style = {{marginVertical: 15}} >
+                <Text style={{ marginVertical: 15 }} >
                     - Or Register With -
                 </Text>
                 <View style={styles.logos}>
@@ -245,10 +246,10 @@ const Register = ({ navigation }) => {
                     <Logo URL={require('./img/image3.png')} />
                 </View>
                 <Dialog
-                visible={error}
-                title="Error log"
-                onTouchOutside={()=>setError(false)} >
-                    <View style={{flexDirection:'row'}}>
+                    visible={error}
+                    title="Error log"
+                    onTouchOutside={() => setError(false)} >
+                    <View style={{ flexDirection: 'row' }}>
                         <Icon name="minus-circle" color="red" size={20} />
                         <Text >
                             {message}
@@ -257,15 +258,15 @@ const Register = ({ navigation }) => {
                     </View>
                 </Dialog>
                 <Dialog
-                visible={login}
-                title=""
-                onTouchOutside={()=>handleLogin()} 
+                    visible={login}
+                    title=""
+                    onTouchOutside={() => handleLogin()}
                 >
-                    <View style={{flexDirection: 'row', marginBottom: 20}}>
+                    <View style={{ flexDirection: 'row', marginBottom: 20 }}>
                         <Text > Sign up is success ! </Text>
                         <Icon name="check-circle" color="green" size={20} />
                     </View>
-                    <Button onPress={()=>handleLogin()} title ="OK" containerStyle={{marginVertical: 30}} />
+                    <Button onPress={() => handleLogin()} title="OK" containerStyle={{ marginVertical: 30 }} />
                 </Dialog>
             </View>
         </KeyboardAwareScrollView>
@@ -283,8 +284,8 @@ const styles = StyleSheet.create({
         marginVertical: 30
     },
     logoText3: {
-      fontSize: 16,
-      color: "#474747",
+        fontSize: 16,
+        color: "#474747",
     },
     logoText: {
         fontSize: 30,
@@ -292,10 +293,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     logoText2: {
-      fontSize: 16,
-      color: "#9A9A9A",
-      marginLeft: 10,
-  },
+        fontSize: 16,
+        color: "#9A9A9A",
+        marginLeft: 10,
+    },
     loginCont: {
         flex: 1,
         justifyContent: 'center',
@@ -309,28 +310,28 @@ const styles = StyleSheet.create({
         fontSize: 30,
     },
     input: {
-      width: 280,
-      height: 50,
-      backgroundColor: '#ffffff',
-      borderBottomRightRadius: 10,
-      borderTopRightRadius: 10,
-      color: 'black',
-      fontSize: 16,
-      borderColor: '#006EE9',
-      borderWidth: 0.2,
-      paddingHorizontal: 20,
+        width: 280,
+        height: 50,
+        backgroundColor: '#ffffff',
+        borderBottomRightRadius: 10,
+        borderTopRightRadius: 10,
+        color: 'black',
+        fontSize: 16,
+        borderColor: '#006EE9',
+        borderWidth: 0.2,
+        paddingHorizontal: 20,
     },
     blockHead: {
         flexDirection: 'row',
         marginBottom: 40,
     },
     block: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 15,
-      marginHorizontal: 15
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 15,
+        marginHorizontal: 15
     },
     icon: {
         flex: 1,
@@ -410,19 +411,19 @@ const styles = StyleSheet.create({
         marginTop: 55,
     },
     logos: {
-      flexDirection: 'row',
-      justifyContent: 'space-between'
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     buttonBack: {
-      marginLeft: 10,
-      marginTop: 10,
-      height: 40,
-      width: 50,
-      borderRadius: 15,
-      backgroundColor: color.Primary,
-      color: "#ffffff",
-      alignItems: 'center',
-      justifyContent: 'center'
+        marginLeft: 10,
+        marginTop: 10,
+        height: 40,
+        width: 50,
+        borderRadius: 15,
+        backgroundColor: color.Primary,
+        color: "#ffffff",
+        alignItems: 'center',
+        justifyContent: 'center'
     },
 })
 export default Register;

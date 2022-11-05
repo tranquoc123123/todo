@@ -1,27 +1,27 @@
-import React, {useEffect, useState} from 'react';
-import { View, Text, StyleSheet,  } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, } from "react-native";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from '../StyleSheet/color';
 
-const ListTodo = ({list, mode})=>{
-    const [listToDo, setListTodo] =useState([]);
-    const IndexINput =(item)=>{
+const ListTodo = ({ list, mode }) => {
+    const [listToDo, setListTodo] = useState([]);
+    const IndexINput = (item) => {
 
     }
     useEffect(() => {
-        if (mode ==='edit'){
+        if (mode === 'edit') {
             setListTodo(list);
         } else {
             setListTodo([])
         }
     }, [])
-    return(
+    return (
         <View>
-            <FlatList 
-            data  = {listToDo}
-            renderItem={IndexINput}
-            keyExtractor={(item) => item._id}
+            <FlatList
+                data={listToDo}
+                renderItem={IndexINput}
+                keyExtractor={(item) => item._id}
             />
             <TouchableOpacity>
                 <Text>

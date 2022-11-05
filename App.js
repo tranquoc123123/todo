@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
 
@@ -13,10 +13,10 @@ LogBox.ignoreAllLogs()
 export default function App() {
   const [user, setUser] = useState(null)
   useEffect(() => {
-     getInit();
-  },[user]);
+    getInit();
+  }, [user]);
 
-  const getInit = async() =>{
+  const getInit = async () => {
     // await AsyncStorage.setItem("user", "quoctk");
     await AsyncStorage.getItem("username").then((value) => {
       setUser(value);
@@ -25,13 +25,13 @@ export default function App() {
     // console.log(user);
   }
   return (
-    <AuthContext.Provider value={{user: user, setUser:setUser}}>
-     <NavigationContainer>
-        {user && <BottomTabBar  navigation ={ {headerShown: false}} />}
-        {!user && <StackScreens  />}
+    <AuthContext.Provider value={{ user: user, setUser: setUser }}>
+      <NavigationContainer>
+        {user && <BottomTabBar navigation={{ headerShown: false }} />}
+        {!user && <StackScreens />}
         {/* <StackScreens/> */}
-     </NavigationContainer>
-     </AuthContext.Provider>
+      </NavigationContainer>
+    </AuthContext.Provider>
 
   )
 }

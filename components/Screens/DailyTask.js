@@ -36,7 +36,7 @@ const DailyTask = () => {
             <Text style={styles.textBlock} >
               14
             </Text>
-            <Text style={{color: 'white'}}>
+            <Text style={{ color: 'white' }}>
               hours
             </Text>
           </View>
@@ -46,7 +46,7 @@ const DailyTask = () => {
             <Text style={styles.textBlock}>
               48
             </Text>
-            <Text style={{color: 'white'}}>
+            <Text style={{ color: 'white' }}>
               minutes
             </Text>
           </View>

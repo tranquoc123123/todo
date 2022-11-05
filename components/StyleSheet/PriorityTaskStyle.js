@@ -9,7 +9,7 @@ export default styles = StyleSheet.create({
   timeTitle: {
     flexDirection: "row",
     justifyContent: "space-between",
-    
+
   },
   title: {
     color: color.Primary,
@@ -19,7 +19,7 @@ export default styles = StyleSheet.create({
   timeInHour: {
     flexDirection: "row",
     justifyContent: "center",
-  
+
   },
   timeBlock: {
     height: 90,
@@ -29,7 +29,7 @@ export default styles = StyleSheet.create({
     margin: 8,
     justifyContent: "center",
     alignItems: "center"
-  
+
   },
   textBlock: {
     fontSize: 40,
@@ -56,7 +56,7 @@ export default styles = StyleSheet.create({
   progressBar: {
     backgroundColor: color.Primary,
     borderRadius: 50,
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center',
 
   },
@@ -73,6 +73,6 @@ export default styles = StyleSheet.create({
   textItem: {
     fontSize: 15,
     color: color.Primary,
-    
+
   }
 })
