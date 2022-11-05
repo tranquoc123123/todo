@@ -7,121 +7,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from "../StyleSheet/color";
 import IndexTask from "../ComponentChild/IndexTask";
 import axiosIntance from '../../apis/axios';
-const data = [
-  {
-    title: 'Design UI',
-    process: 80,
-    days: 10,
-    id: 1,
-    level: 'urgency',
-    iconType: '0',
-    startdate:'2022-10-25T00:00:00.000Z',
-    enddate:'2022-10-25T00:00:00.000Z',
-    listItem: [
-      {
-        complete: "yes",
-        title: "Reactnative",
-        description: "tạo giao diện"
-      },
-      {
-        complete: "yes",
-        title: "Reactnative",
-        description: "tạo giao diện"
-      },
-      {
-        complete: "no",
-        title: "Reactnative",
-        description: "tạo giao diện"
-      },
-      {
-        complete: "yes",
-        title: "Reactnative",
-        description: "tạo giao diện"
-      }
-    ]
-  },
-  {
-    title: 'Laravel',
-    process: 60,
-    days: 10,
-    id: 2,
-    level: 'normal',
-    iconType: '1',
-    startdate:'2022-10-17T00:00:00.000Z',
-    enddate:'2022-10-18T00:00:00.000Z',
-  },
-  {
-    title: 'Task 3',
-    process: 0,
-    days: 10,
-    id: 3,
-    level: 'important',
-    iconType: '3',
-    startdate:'2022-10-17T00:00:00.000Z',
-    enddate:'2022-10-25T00:00:00.000Z',
-  },
-  {
-    title: 'Task 4',
-    process: 10,
-    days: 10,
-    id: 4,
-    level: 'normal',
-    iconType: '2',
-    startdate:'2022-10-17T00:00:00.000Z',
-    enddate:'2022-10-25T00:00:00.000Z',
-  },
-  {
-    title: 'Task 5',
-    process: 60,
-    days: 10,
-    id: 5,
-    level: 'normal',
-    iconType: '1',
-    startdate:'2022-10-17T00:00:00.000Z',
-    enddate:'2022-10-25T00:00:00.000Z',
-  },
-] 
-
-const data1 = [
-  {
-    title: 'Work Out',
-    status: true,
-    id: 1,
-  },
-  {
-    title: 'Daily Metting',
-    status: true,
-    id: 2,
-  },
-  {
-    title: 'Reading book',
-    status: false,
-    id: 3,
-  },
-  {
-    title: 'Daily Metting',
-    status: false,
-    id: 4,
-  },
-  {
-    title: 'Task 5',
-    status: false,
-    id: 5
-  },
-  {
-    title: 'Daily Metting',
-    status: false,
-    id: 6,
-  },
-  {
-    title: 'Task 5',
-    status: false,
-    id: 7
-  },
-] 
-
-
-
 
 const taskCard = ({ item }) => {
   let bgc = '#006EE9'
@@ -130,7 +15,7 @@ const taskCard = ({ item }) => {
   let totalItem = 0;
   let totalItemFinished = 0;
   let progress = 0
-  if (item.enddate && item.enddate){
+  if (item.enddate && item.startdate){
     try {
       let msDiff = new Date(item.enddate).getTime() - new Date(item.startdate).getTime();
       days = Math.floor(msDiff / (1000 * 60 * 60 * 24))+1;
@@ -139,19 +24,17 @@ const taskCard = ({ item }) => {
     }
 
   }
-  if (item.listItem) {
-    totalItem = item.listItem.length;
-    totalItemFinished = item.listItem.filter(item =>{
-      if(item.complete.toUpperCase() ==="YES"){
+  // console.log(item.list_item)
+  if (item.list_item) {
+    totalItem = item.list_item.length;
+    totalItemFinished = item.list_item.filter(item =>{
+      if(item.isComplete.toUpperCase() ==="YES"){
         return true;
       }
     }).length;
-    progress = (totalItemFinished/totalItem)*100;
-    console.log(totalItemFinished);
+    progress = ((totalItemFinished/totalItem)*100).toFixed(2);
+    // console.log(totalItemFinished);
   }; 
-  
-  
-
   switch(item.level.toUpperCase()) {
     case 'NORMAL':
       bgc = '#006EE9';
@@ -185,7 +68,7 @@ const taskCard = ({ item }) => {
       icon = 'briefcase';
     }
   return (
-      <TaskCard key={item.id}
+      <TaskCard key={item._id}
           title={item.title}
           id={item.id}
           icon={icon}
@@ -197,10 +80,26 @@ const taskCard = ({ item }) => {
 }
 
 const indexTask = ({ item }) => {
+  const title = item.titleItem;
+  let  status = false;
+  console.log(item.isComplete);
+  if (item.isComplete.toUpperCase() === "YES") {
+    status  = true;
+  }
   return (
-      <IndexTask key={item.id}
-          title={item.title}
-          status={item.status}
+      <IndexTask key={item._id}
+          title={title}
+          status={status}
+          id={item._id}
+          updateFunc={async(id, status)=>{
+            let isYes = "NO"
+            if (status) {
+              isYes = "YES"
+            }
+            const res = await axiosIntance.put('/item/'+id,{isComplete: isYes},{}).catch(err=>{
+              console.log(err);
+            })
+          }}
           />
   )
 }
@@ -209,6 +108,7 @@ const indexTask = ({ item }) => {
 
 const Home = ({navigation}) => {
   const [dataTask, setDataTask] = useState([]);
+  const [dailyTask, setDailyTask] = useState([]);
   const [username, setUserName] = useState(null);
   const [date, setDate] = useState(null);
   const nav = useNavigation();
@@ -226,7 +126,7 @@ const Home = ({navigation}) => {
 
 
   const getTask = async () => {
-    axios.defaults.headers.common["userId"] = "6353914e9cfcaa7479f8d09e";
+    axiosIntance.defaults.headers.common["id"] = "6360986eab6b9925b4ceea2b";
     const res = await axiosIntance.get("/todo" , {
         // params:{
         //     id: "62fbcb17e8588f32cbea05b7"
@@ -234,30 +134,30 @@ const Home = ({navigation}) => {
     }).then(
         res => {
           setDataTask(res.data)
-           console.log(res.data)
+          setDailyTask(res.data[0].list_item)
         }
     ).catch(error => {
         console.log(error)
     }).finally(() => {
-        // setIsLoading(false)
+
     });
-    const res1 = await axiosIntance.get("/todo" , {
-      // params:{
-      //     id: "62fbcb17e8588f32cbea05b7"
-      // }
-    }).then(
-        res => {
-          setDataTask(res.data)
-          console.log(res.data)
-        }
-    ).catch(error => {
-        console.log(error)
-    }).finally(() => {
-        // setIsLoading(false)
-    });
+    // const res1 = await axiosIntance.get("/todo" , {
+    //   // params:{
+    //   //     id: "62fbcb17e8588f32cbea05b7"
+    //   // }
+    // }).then(
+    //     res => {
+    //       setDataTask(res.data)
+    //       console.log(res.data)
+    //     }
+    // ).catch(error => {
+    //     console.log(error)
+    // }).finally(() => {
+    //     // setIsLoading(false)
+    // });
   }
   const IntLoad = async()=>{
-    let user = await AsyncStorage.getItem('user');
+    const user = await AsyncStorage.getItem('username');
     await setUserName(user);  
     await setDate(new Date().toDateString())
   }
@@ -266,9 +166,8 @@ const Home = ({navigation}) => {
     navigation.setOptions({
         headerShown: false,
     });
-    // IntLoad();
-    // getTask();
-    // setDataTask(dâta);
+    IntLoad();
+    getTask();
 }, [])
   return (
     <SafeAreaView style={styles.container} >
@@ -282,7 +181,7 @@ const Home = ({navigation}) => {
         }
       >
       <View style={styles.header}>
-        <Text>Thursday, October 20 2022</Text>
+        <Text>{new Date().toDateString()}</Text>
         <View>
           <Icon name="bell" color={color.Secondary} size={20} />
         </View>
@@ -297,7 +196,7 @@ const Home = ({navigation}) => {
             style={styles.cardList}
             horizontal
             pagingEnabled={false}
-            data={data}
+            data={dataTask}
             renderItem={taskCard}
             keyExtractor={(item) => item.id}
           />
@@ -308,7 +207,7 @@ const Home = ({navigation}) => {
         <FlatList
             style={styles.IndexList}
             pagingEnabled={false}
-            data={data1}
+            data={dailyTask}
             renderItem={indexTask}
             keyExtractor={(item) => item.id}
           />

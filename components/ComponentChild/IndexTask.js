@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from '../StyleSheet/color';
-const IndexTask = ({status, title, id, type, bgc}) => {
+const IndexTask = ({status, title, id, type, bgc, updateFunc}) => {
     const [isSelect, setSelect] = useState(status);
 // let progressNum = 100;
 // progressNum = progress;
@@ -13,9 +13,12 @@ useEffect(() => {
 //   const prg = progress/100;
 
 const handlePress = () =>{
+    let status = false;
     {
-        isSelect ? setSelect(false) : setSelect(true)
+        isSelect ? status = false : status = true
     }
+    setSelect(status);
+    updateFunc(id, status);
 }
   return (
     <Pressable onPress={handlePress}>

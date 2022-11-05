@@ -18,7 +18,7 @@ export default function App() {
 
   const getInit = async() =>{
     // await AsyncStorage.setItem("user", "quoctk");
-    await AsyncStorage.getItem("user").then((value) => {
+    await AsyncStorage.getItem("username").then((value) => {
       setUser(value);
     });
     // const user = await AsyncStorage.getItem("user");

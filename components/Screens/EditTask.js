@@ -197,7 +197,7 @@ const EditTask = ({navigation}) => {
             await setMessage('Please input all title of list todo');
             result = false;
         } 
-        if (startDate.getTime() > endDate.getTime()){
+        if (endDate.getTime() < startDate.getTime()){
             await setMessage('The end date must be greater than the start date');
             result = false;
         }

@@ -41,10 +41,10 @@ const LoginScreen = ({ navigation }) => {
                 console.log(res.data.user);
                 await updateToken(res.data.token);
                 await AsyncStorage.setItem('token', res.data.token)
-                await AsyncStorage.setItem('user', res.data.user)
+                await AsyncStorage.setItem('username', res.data.username)
                 await AsyncStorage.setItem('userId', res.data.userId)
-                await userCtx.setUser(res.data.user);
-                await console.log('login with user: ' + res.data.user)
+                await userCtx.setUser(res.data.username);
+                await console.log('login with user: ' + res.data.username)
             }).
             catch(error => {
             // console.log(JSON.stringify(error));
