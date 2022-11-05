@@ -13,6 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import color from './../StyleSheet/color';
 import Logo from '../ComponentChild/logo';
 import { Dialog } from 'react-native-simple-dialogs';
+import DialogCustom from "../ComponentChild/Dialog";
 const Register = ({ navigation }) => {
     useEffect(() => {
         navigation.setOptions({
@@ -245,29 +246,16 @@ const Register = ({ navigation }) => {
                     <Logo URL={require('./img/image2.png')} />
                     <Logo URL={require('./img/image3.png')} />
                 </View>
-                <Dialog
+                <DialogCustom
                     visible={error}
-                    title="Error log"
-                    onTouchOutside={() => setError(false)} >
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon name="minus-circle" color="red" size={20} />
-                        <Text >
-                            {message}
-                        </Text>
-                        {/* <Button title="OK" style ={{marginRight: 0, width: "10%"}} onPress={()=>setError(false)} /> */}
-                    </View>
-                </Dialog>
-                <Dialog
+                    onPressHandle={() => setError(false)}
+                    message={message}
+                />
+                <DialogCustom
                     visible={login}
-                    title=""
-                    onTouchOutside={() => handleLogin()}
-                >
-                    <View style={{ flexDirection: 'row', marginBottom: 20 }}>
-                        <Text > Sign up is success ! </Text>
-                        <Icon name="check-circle" color="green" size={20} />
-                    </View>
-                    <Button onPress={() => handleLogin()} title="OK" containerStyle={{ marginVertical: 30 }} />
-                </Dialog>
+                    onPressHandle={() => handleLogin()}
+                    message="Sign up is success"
+                />
             </View>
         </KeyboardAwareScrollView>
     );

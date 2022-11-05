@@ -14,11 +14,20 @@ import Octicons from "react-native-vector-icons/Octicons";
 import MainStack from "./MainStack";
 import { ColorSpace } from "react-native-reanimated";
 import color from "../StyleSheet/color";
-
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 const Tab = createBottomTabNavigator();
-
 const BottomTabBar = ({ navigation }) => {
-
+  setOption = (route) => {
+    const routeName = route.state
+      ? route.state.routes[route.state.index].name
+      : '';
+  
+    if (routeName === '') {
+      return false;
+    }
+  
+    return true;
+  }
   return (
     <Tab.Navigator initialRouteName='Home'
 
@@ -45,11 +54,23 @@ const BottomTabBar = ({ navigation }) => {
 
       <Tab.Screen
         name={'Home'}
-        component={MainStack}
-        options={{
-          tabBarIcon: ({ color }) => (<Icon name={'home'} color={color} size={32} />)
-        }}
-
+        component={Home}
+        // options={{
+        //   tabBarIcon: ({ color }) => (<Icon name={'home'} color={color} size={32} />),
+        // }}
+        options={({ route }) => ({
+          tabBarVisible: ((route) => {
+              const routeName = getFocusedRouteNameFromRoute(route) ?? ""
+              console.log(routeName);
+              if (routeName === "PriorityTask") {
+                  return false
+              }
+              return true
+          })(route),
+          tabBarIcon: ({ color }) => (<Icon name={'home'} color={color} size={32} />),
+          headerShown: false,
+        } 
+      )}
       />
 
       <Tab.Screen

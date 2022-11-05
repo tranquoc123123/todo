@@ -1,20 +1,19 @@
 import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native'
 
 
-const TaskCard = ({ key, days, progress, title, id, bgc, icon }) => {
-    // let progressNum = 100;
-    // progressNum = progress;
-    // useEffect(() => {
-    //     // progressNum = progress;
-    // }, [])
+const TaskCard = ({id, days, progress, title, bgc, icon }) => {
+    const [idTask, setIdTask] = useState();
     const nav = useNavigation();
     const prg = progress / 100;
+    useEffect(() => {
+        setIdTask(id);
+      }, [])
     return (
-        <TouchableOpacity onPress={() => { nav.navigate("PriorityTask"); }}>
+        <TouchableOpacity  onPress={() => { nav.navigate("PriorityTask", {id: id}); }}>
             <View style={[styles.container, { backgroundColor: bgc }]}>
                 <View style={styles.header}>
                     <View style={styles.time}>

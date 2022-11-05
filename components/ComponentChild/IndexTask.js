@@ -13,12 +13,12 @@ const IndexTask = ({ status, title, id, type, bgc, updateFunc }) => {
     //   const prg = progress/100;
 
     const handlePress = () => {
-        let status = false;
-        {
-            isSelect ? status = false : status = true
-        }
-        setSelect(status);
-        updateFunc(id, status);
+        // let status = false;
+        // {
+        //     isSelect ? status = false : status = true
+        // }
+        // setSelect(status);
+        // updateFunc(id, status);
     }
     return (
         <Pressable onPress={handlePress}>

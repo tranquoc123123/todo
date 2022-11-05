@@ -31,12 +31,7 @@ const EditTask = ({ navigation }) => {
     const [isGetting, setGetting] = useState(true);
     const [message, setMessage] = useState();
     const [listItem, setListItem] = useState([]);
-
-    // const [description, setDescription] = useState();
-
-
     const route = useRoute();
-
     const onChange = (event, selectedDate) => {
         // const currentDate = selectedDate || date;
         // setDate(currentDate);

@@ -4,7 +4,8 @@ import color from "./color";
 export default styles = StyleSheet.create({
   body: {
     paddingRight: 10,
-    paddingLeft: 10
+    paddingLeft: 10,
+    flex: 1,
   },
   timeTitle: {
     flexDirection: "row",
@@ -12,9 +13,10 @@ export default styles = StyleSheet.create({
 
   },
   title: {
-    color: color.Primary,
-    fontSize: 30,
-    fontWeight: "700"
+    color: color.Secondary,
+    fontSize: 32,
+    fontWeight: "700",
+    marginVertical: 20
   },
   timeInHour: {
     flexDirection: "row",
@@ -74,5 +76,10 @@ export default styles = StyleSheet.create({
     fontSize: 15,
     color: color.Primary,
 
+  },
+  indexText:{
+    fontSize: 14,
+    color: "#4A4646",
+    marginTop: 10
   }
 })

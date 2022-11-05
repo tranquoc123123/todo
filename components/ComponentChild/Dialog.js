@@ -14,7 +14,7 @@ const DialogCustom = ({ message, onPressHandle, visible, title }) => {
         >
             <View style={styles.container}>
                 <Text style={{ color: color.Primary, fontSize: 16 }} color={color.Primary} > {message} </Text>
-                <TouchableOpacity onPress={() => onPressHandle()} style={styles.button}>
+                <TouchableOpacity onPress={() => {onPressHandle()}} style={styles.button}>
                     <Text style={{ color: "#ffffff" }}>OK</Text>
                 </TouchableOpacity>
             </View>

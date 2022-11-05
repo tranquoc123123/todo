@@ -7,14 +7,62 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from "../StyleSheet/color";
 import IndexTask from "../ComponentChild/IndexTask";
 import axiosIntance from '../../apis/axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+// import { parseToIcon } from "../ComponentChild/CommonFunction";
+// import { parseToLevelColor } from "../ComponentChild/CommonFunction";
+
+const parseToIcon = ({ text }) => {
+  let icon = ""
+  switch (text) {
+      case 'WORKING':
+          icon = 'briefcase';
+          break;
+
+      case 'READING':
+          icon = 'book';
+          break;
+
+      case 'DESIGN':
+          icon = 'pencil-ruler';
+          break;
+      case 'CODING':
+          icon = 'code';
+          break;
+
+      default:
+          icon = 'briefcase';
+  }
+  return icon;
+}
+const parseToLevelColor = ({ text }) => {
+  let color = "#006EE9"
+  switch (text) {
+      case 'NORMAL':
+          bgc = '#006EE9';
+          break;
+    
+        case 'URGENCY':
+          bgc = '#311F65';
+          break;
+    
+        case 'IMPORTANT':
+          bgc = '#D92C2C';
+          break;
+    
+        default:
+          bgc = '#006EE9';
+  }
+  return color;
+}
 
 const taskCard = ({ item }) => {
   let bgc = '#006EE9'
-  let icon = 'briefcase'
+  let icon = 'brefcase'
   let days = 1
   let totalItem = 0;
   let totalItemFinished = 0;
-  let progress = 0
+  let progress = 0;
+  let id = item._id;
   if (item.enddate && item.startdate) {
     try {
       let msDiff = new Date(item.enddate).getTime() - new Date(item.startdate).getTime();
@@ -22,7 +70,6 @@ const taskCard = ({ item }) => {
     } catch (error) {
       days = 0
     }
-
   }
   // console.log(item.list_item)
   if (item.list_item) {
@@ -35,42 +82,13 @@ const taskCard = ({ item }) => {
     progress = ((totalItemFinished / totalItem) * 100).toFixed(2);
     // console.log(totalItemFinished);
   };
-  switch (item.level.toUpperCase()) {
-    case 'NORMAL':
-      bgc = '#006EE9';
-      break;
-
-    case 'URGENCY':
-      bgc = '#311F65';
-      break;
-
-    case 'IMPORTANT':
-      bgc = '#D92C2C';
-      break;
-
-    default:
-      bgc = '#006EE9';
-  }
-  switch (item.iconType) {
-    case '0':
-      icon = 'briefcase';
-      break;
-
-    case '1':
-      icon = 'book';
-      break;
-
-    case '3':
-      icon = 'pencil-ruler';
-      break;
-
-    default:
-      icon = 'briefcase';
-  }
+  icon  =   parseToIcon(item.icontype.toUpperCase());
+  bgc   =   parseToLevelColor(item.level.toUpperCase());
   return (
-    <TaskCard key={item._id}
+    <TaskCard 
+      key={id}
+      id={id}
       title={item.title}
-      id={item.id}
       icon={icon}
       bgc={bgc}
       days={days}
@@ -82,15 +100,15 @@ const taskCard = ({ item }) => {
 const indexTask = ({ item }) => {
   const title = item.titleItem;
   let status = false;
-  console.log(item.isComplete);
   if (item.isComplete.toUpperCase() === "YES") {
     status = true;
   }
+
   return (
-    <IndexTask key={item._id}
+    <IndexTask 
+      key={item._id}
       title={title}
       status={status}
-      id={item._id}
       updateFunc={async (id, status) => {
         let isYes = "NO"
         if (status) {
@@ -159,6 +177,7 @@ const Home = ({ navigation }) => {
   const IntLoad = async () => {
     const user = await AsyncStorage.getItem('username');
     await setUserName(user);
+    console.log(username);
     await setDate(new Date().toDateString())
   }
 
@@ -187,19 +206,21 @@ const Home = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.header1}>
-          <Text style={{ fontSize: 24, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold' }}>Welcome {username}</Text>
+          <Text style={{ fontSize: 24, fontFamily: 'Poppins', color: color.Secondary, fontWeight: 'bold' }}>Welcome {username}</Text>
           <Text style={{ fontSize: 16, fontFamily: 'Poppins', color: 'gray' }}>Have a nice day !</Text>
         </View>
         <View style={styles.cardContainer1} >
           <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold' }} >My Priority Task</Text>
-          <FlatList
-            style={styles.cardList}
-            horizontal
-            pagingEnabled={false}
-            data={dataTask}
-            renderItem={taskCard}
-            keyExtractor={(item) => item.id}
-          />
+          <ScrollView horizontal={true} style={{ width: "100%" }}>
+            <FlatList
+              style={styles.cardList}
+              horizontal
+              pagingEnabled={false}
+              data={dataTask}
+              renderItem={taskCard}
+              keyExtractor={(item) => item._id}
+            />
+          </ScrollView>
         </View>
         <View style={styles.cardContainer2}>
           <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold', marginBottom: 10 }} >Daily Task</Text>
@@ -209,7 +230,7 @@ const Home = ({ navigation }) => {
             pagingEnabled={false}
             data={dailyTask}
             renderItem={indexTask}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item._id}
           />
         </View>
       </ScrollView>

@@ -13,16 +13,19 @@ import PriorityTask from "../Screens/PriorityTask";
 
 const Stack = createNativeStackNavigator();
 
-const MainStack = () => {
-
+const MainStack = ({navigation, route}) => {
+  console.log(route.state);
+  if(route.state && route.state.index > 0) {
+    navigation.setOptions({tabBarVisible:false})
+  }else{
+    navigation.setOptions({tabBarVisible:true})
+  }
   return (
 
     <Stack.Navigator initialRouteName='login' >
-
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="DailyTask" component={DailyTask} />
       <Stack.Screen name="PriorityTask" component={PriorityTask} />
-
 
     </Stack.Navigator>
 

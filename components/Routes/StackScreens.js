@@ -18,19 +18,18 @@ import BottomTabBar from "../Routes/BottomTabBar";
 
 const Stack = createNativeStackNavigator();
 
-const StackScreens = ({navigation}) => {
+const StackScreens = ({navigation, route}) => {
 
   return (
 
     <Stack.Navigator initialRouteName='Login'>
       {/* <Stack.Screen name="BottomTab" component={BottomTabBar} options={{headerShown: false}} /> */}
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Home" component={Home}  />
       <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="Important" component={Important} />
+      {/* <Stack.Screen name="Important" component={Important} />
       <Stack.Screen name="DailyTask" component={DailyTask} />
       <Stack.Screen name="PriorityTask" component={PriorityTask} />
-      <Stack.Screen name="EditTask" component={EditTask} />
+      <Stack.Screen name="EditTask" component={EditTask} /> */}
     </Stack.Navigator>
 
   )
