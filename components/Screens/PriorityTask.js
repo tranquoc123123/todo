@@ -67,6 +67,7 @@ const PriorityTask = ({ navigation }) => {
   }
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    getDetail();
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
@@ -293,7 +294,7 @@ const PriorityTask = ({ navigation }) => {
               <ScrollView>
                 {listItem.map(
                   (item) =>
-                    <IndexTask id={item._id} setState={true} key={item._id} updateFunc={(id, status) => UppdateArr(id, status)} title={item.titleItem} id={item._id} status={paseStatus(item.isComplete)} />
+                    <IndexTask id={item._id} setState={true} key={item._id} updateFunc={(id, status) => UppdateArr(id, status)} title={item.titleItem} status={paseStatus(item.isComplete)} />
                 )}
               </ScrollView>
             </View>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosIntance from "../../apis/axios";
+import { server } from "../../apis/server";
 const parseToIcon = (text ) => {
     let icon = "briefcase"
     switch (text) {
@@ -50,4 +51,19 @@ const updateStatusItem = async( id, status ) => {
     return res;
 }
 
-export { parseToIcon, parseToLevelColor, updateStatusItem };
+const updateStatusTask = async( id, status ) => {
+    const config = {"id": id}
+    const res = await axios.create({ baseURL: server, headers: config }).put('/todo', { complete: status }, {}).catch(err => {
+        console.log(err);
+    });
+    return res;
+}
+
+const getLocalDate = () => {
+    let dt = new Date();
+    let minutes = dt.getTimezoneOffset();
+    dt = new Date(dt.getTime() + minutes*60000);
+    return dt;
+}
+
+export { parseToIcon, parseToLevelColor, updateStatusItem, updateStatusTask };

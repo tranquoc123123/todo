@@ -113,6 +113,7 @@ const indexTask = ({ item }) => {
       title={title}
       status={status}
       setState={false}
+      id={item._id}
       updateFunc={async (id, status) => { }}
     />
   )
@@ -135,6 +136,7 @@ const Home = ({ navigation }) => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getTask();
+    getDailyTask();
     wait(2000).then(() => setRefreshing(false));
 
   }, []);
