@@ -12,7 +12,7 @@ export default function Profile() {
     await updateToken(null);
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('username');
-    await AsyncStorage.removeItem('userId');
+    await AsyncStorage.removeItem('userid');
     await userCtx.setUser(null);
   };
   return (

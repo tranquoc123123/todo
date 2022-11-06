@@ -10,47 +10,50 @@ import axiosIntance from '../../apis/axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { parseToIcon } from "../ComponentChild/CommonFunction";
 // import { parseToLevelColor } from "../ComponentChild/CommonFunction";
-
-const parseToIcon = ({ text }) => {
-  let icon = ""
+import { ProgressBar, MD3Colors } from 'react-native-paper';
+import IndexTaskView from "../ComponentChild/IndexTaskView";
+import axios from "axios";
+import { server } from "../../apis/server";
+const parseToIcon = (text) => {
+  let icon = "briefcase"
   switch (text) {
-      case 'WORKING':
-          icon = 'briefcase';
-          break;
+    case 'WORKING':
+      icon = 'briefcase';
+      break;
 
-      case 'READING':
-          icon = 'book';
-          break;
+    case 'READING':
+      icon = 'book';
+      break;
 
-      case 'DESIGN':
-          icon = 'pencil-ruler';
-          break;
-      case 'CODING':
-          icon = 'code';
-          break;
+    case 'DESIGN':
+      icon = 'pencil-ruler';
+      break;
+    case 'CODING':
+      icon = 'code';
+      break;
 
-      default:
-          icon = 'briefcase';
+    default:
+      icon = 'briefcase';
   }
   return icon;
 }
 const parseToLevelColor = ({ text }) => {
   let color = "#006EE9"
   switch (text) {
-      case 'NORMAL':
-          bgc = '#006EE9';
-          break;
-    
-        case 'URGENCY':
-          bgc = '#311F65';
-          break;
-    
-        case 'IMPORTANT':
-          bgc = '#D92C2C';
-          break;
-    
-        default:
-          bgc = '#006EE9';
+    case 'NORMAL':
+      bgc = '#006EE9';
+      break;
+
+    case 'URGENCY':
+      bgc = '#311F65';
+      break;
+
+    case 'IMPORTANT':
+      bgc = '#D92C2C';
+      break;
+
+    default:
+      bgc = '#006EE9';
   }
   return color;
 }
@@ -72,7 +75,7 @@ const taskCard = ({ item }) => {
     }
   }
   // console.log(item.list_item)
-  if (item.list_item) {
+  if (( item.list_item) && (item.list_item.length > 0)) {
     totalItem = item.list_item.length;
     totalItemFinished = item.list_item.filter(item => {
       if (item.isComplete.toUpperCase() === "YES") {
@@ -80,12 +83,11 @@ const taskCard = ({ item }) => {
       }
     }).length;
     progress = ((totalItemFinished / totalItem) * 100).toFixed(2);
-    // console.log(totalItemFinished);
   };
-  icon  =   parseToIcon(item.icontype.toUpperCase());
-  bgc   =   parseToLevelColor(item.level.toUpperCase());
+  icon = parseToIcon(item.icontype.toUpperCase());
+  bgc = parseToLevelColor(item.level.toUpperCase());
   return (
-    <TaskCard 
+    <TaskCard
       key={id}
       id={id}
       title={item.title}
@@ -98,26 +100,20 @@ const taskCard = ({ item }) => {
 }
 
 const indexTask = ({ item }) => {
-  const title = item.titleItem;
+  const title = item.title;
   let status = false;
-  if (item.isComplete.toUpperCase() === "YES") {
+  if (item.complete.toUpperCase() === "YES") {
     status = true;
+  } else {
+    status = false;
   }
-
   return (
-    <IndexTask 
+    <IndexTaskView
       key={item._id}
       title={title}
       status={status}
-      updateFunc={async (id, status) => {
-        let isYes = "NO"
-        if (status) {
-          isYes = "YES"
-        }
-        const res = await axiosIntance.put('/item/' + id, { isComplete: isYes }, {}).catch(err => {
-          console.log(err);
-        })
-      }}
+      setState={false}
+      updateFunc={async (id, status) => { }}
     />
   )
 }
@@ -131,48 +127,68 @@ const Home = ({ navigation }) => {
   const [date, setDate] = useState(null);
   const nav = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    getTask();
     wait(2000).then(() => setRefreshing(false));
+
   }, []);
 
-  // const navigation = useNavigation();
-
-
   const getTask = async () => {
-    axiosIntance.defaults.headers.common["id"] = "6360986eab6b9925b4ceea2b";
-    const res = await axiosIntance.get("/todo", {
+    const userid = await AsyncStorage.getItem("userid");
+    const config = {"type": "priority", "userid": userid};
+    const res = await axios.create({ baseURL: server , headers: config }).get("/todo", {
       // params:{
       //     id: "62fbcb17e8588f32cbea05b7"
       // }
     }).then(
       res => {
         setDataTask(res.data)
-        setDailyTask(res.data[0].list_item)
+        setIsLoading(false)
       }
     ).catch(error => {
       console.log(error)
     }).finally(() => {
 
     });
-    // const res1 = await axiosIntance.get("/todo" , {
-    //   // params:{
-    //   //     id: "62fbcb17e8588f32cbea05b7"
-    //   // }
-    // }).then(
-    //     res => {
-    //       setDataTask(res.data)
-    //       console.log(res.data)
-    //     }
-    // ).catch(error => {
-    //     console.log(error)
-    // }).finally(() => {
-    //     // setIsLoading(false)
-    // });
+  }
+  const getDailyTask = async () => {
+    const userid = await AsyncStorage.getItem("userid");
+    const now = new Date()
+    const fromdateTmp =  now.setHours(0,0,0,0);
+    const todateTmp =   now.setHours(23,59,59,999);
+    const fromdate = new Date(fromdateTmp);
+    const todate =  new Date(todateTmp);
+    const config = {
+        "type": "daily",
+        "fromdate":fromdate,
+        "todate":todate,
+        "userId": userid
+    };
+    const res = await axios.create({ baseURL: server, headers: config }).get("/todo", {
+      // params:{
+      //     id: "62fbcb17e8588f32cbea05b7"
+      // }
+    }).then(
+      res => {
+        if (res.data){
+          setDailyTask(res.data)
+        } else{
+          setDailyTask([]);
+        }
+        console.log(res.data);
+      }
+    ).catch(error => {
+      console.log(error)
+      setDailyTask([]);
+    }).finally(() => {
+
+    });
   }
   const IntLoad = async () => {
     const user = await AsyncStorage.getItem('username');
@@ -187,11 +203,14 @@ const Home = ({ navigation }) => {
     });
     IntLoad();
     getTask();
+    getDailyTask();
   }, [])
   return (
-    <SafeAreaView style={styles.container} >
+    <View style={styles.container} >
       <ScrollView
         contentContainerStyle={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -202,39 +221,47 @@ const Home = ({ navigation }) => {
         <View style={styles.header}>
           <Text>{new Date().toDateString()}</Text>
           <View>
-            <Icon name="bell" color={color.Secondary} size={20} />
+            <Icon name="bell" color={color.Secondary} size={30} />
           </View>
         </View>
         <View style={styles.header1}>
-          <Text style={{ fontSize: 24, fontFamily: 'Poppins', color: color.Secondary, fontWeight: 'bold' }}>Welcome {username}</Text>
+          <Text style={{ fontSize: 32, fontFamily: 'Poppins', color: color.Secondary, fontWeight: 'bold' }}>Welcome {username}</Text>
           <Text style={{ fontSize: 16, fontFamily: 'Poppins', color: 'gray' }}>Have a nice day !</Text>
         </View>
-        <View style={styles.cardContainer1} >
-          <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold' }} >My Priority Task</Text>
-          <ScrollView horizontal={true} style={{ width: "100%" }}>
-            <FlatList
-              style={styles.cardList}
-              horizontal
-              pagingEnabled={false}
-              data={dataTask}
-              renderItem={taskCard}
-              keyExtractor={(item) => item._id}
-            />
-          </ScrollView>
-        </View>
-        <View style={styles.cardContainer2}>
-          <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold', marginBottom: 10 }} >Daily Task</Text>
-          {/* <TaskCard /> */}
-          <FlatList
-            style={styles.IndexList}
-            pagingEnabled={false}
-            data={dailyTask}
-            renderItem={indexTask}
-            keyExtractor={(item) => item._id}
-          />
-        </View>
+        {isLoading ?
+          <View>
+            <ProgressBar progress={0.8} color={color.Primary} style={{ height: 10, borderRadius: 5 }} indeterminate={true} />
+          </View> :
+          <View>
+            <View style={styles.cardContainer1} >
+              <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold' }} >My Priority Task</Text>
+              <ScrollView horizontal={true} style={{ width: "100%" }}>
+                <FlatList
+                  style={styles.cardList}
+                  horizontal
+                  pagingEnabled={false}
+                  data={dataTask}
+                  renderItem={taskCard}
+                  keyExtractor={(item) => item._id}
+                />
+              </ScrollView>
+            </View>
+            <View style={styles.cardContainer2}>
+              <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold', marginBottom: 10 }} >Daily Task</Text>
+              {/* <TaskCard /> */}
+              <FlatList
+                style={styles.IndexList}
+                pagingEnabled={false}
+                data={dailyTask}
+                renderItem={indexTask}
+                keyExtractor={(item) => item._id}
+              />
+            </View>
+          </View>
+        }
+
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -242,6 +269,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
+    paddingBottom: 50
   },
   header: {
     flex: 0.75,
@@ -274,7 +302,7 @@ const styles = StyleSheet.create({
     marginVertical: 10
   },
   cardContainer2: {
-    flex: 3,
+    flex: 5,
     marginVertical: 10
   },
   cardList: {

@@ -9,8 +9,33 @@ import { server } from "../../apis/server";
 import IndexTask from "../ComponentChild/IndexTask";
 import color from "../StyleSheet/color";
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { ProgressBar, MD3Colors } from 'react-native-paper';
+import { parseToIcon } from "../ComponentChild/CommonFunction";
+import DialogCustom from "../ComponentChild/Dialog";
+import { updateStatusItem } from "../ComponentChild/CommonFunction";
 
-const PriorityTask = ({navigation}) => {
+const parseToLevelColor = (text) => {
+  let color = "#006EE9"
+  switch (text) {
+    case 'NORMAL':
+      color = '#006EE9';
+      break;
+
+    case 'URGENCY':
+      color = '#311F65';
+      break;
+
+    case 'IMPORTANT':
+      color = '#D92C2C';
+      break;
+
+    default:
+      color = '#006EE9';
+  }
+  return color;
+}
+
+const PriorityTask = ({ navigation }) => {
   const route = useRoute();
   const [idTask, setIdTask] = useState();
   const [isGetting, setIsGetting] = useState(false);
@@ -21,29 +46,59 @@ const PriorityTask = ({navigation}) => {
   const [endDate, setEndDate] = useState();
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [levelColor, setLevelColor] = useState();
   const nav = useNavigation();
-
+  const [process, setProcess] = useState(0);
+  const [months, setMonth] = useState(0);
+  const [days, setDays] = useState(0);
+  const [hours, setHours] = useState(0);
+  const [icon, setIcon] = useState("briefcase");
+  const [isOK, setOK] = useState(false);
+  const [message, setMessage] = useState("");
   const gotoHome = () => {
-    console.log("onpress");
-      nav.navigate("Home");
+    nav.navigate("Home");
   }
 
   const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
   const setHeader = async () => {
-    axios.defaults.headers.common["id"] = route.params.id;
+    return {"id": route.params.id}
   }
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
+  setDeadLineTime = async (end) => {
+    const nowdate = new Date();
+    const endate = new Date(end);
+    if (nowdate.getTime() < endate.getTime()) {
+      let msDiff = endate.getTime() - nowdate.getTime();
+      let months = Math.floor(msDiff / (1000 * 60 * 60 * 24 * 30));
+      setMonth(months);
+      if (months > 0) {
+        msDiff = msDiff - months * (1000 * 60 * 60 * 24 * 30)
+      }
+      let day = Math.floor(msDiff / (1000 * 60 * 60 * 24));
+      setDays(day)
+      if (day > 0) {
+        msDiff = msDiff - day * (1000 * 60 * 60 * 24)
+      }
+      let hour = Math.floor(msDiff / (1000 * 60 * 60));
+      setHours(hour);
+    } else {
+      setMonth(0);
+      setDays(0);
+      setHours(0);
+    }
+  }
+
   const getDetail = async () => {
     setIsGetting(true);
-    await setHeader();
+    const config = await setHeader();
     // console.log(route.params.id);
-    const res = await axios.create({ baseURL: server }).get("/todo/", {
+    const res = await axios.create({ baseURL: server, headers:config }).get("/todo/", {
     }, {}).then(res => {
       setTitle(res.data[0].title);
       setDescription(res.data[0].description);
@@ -53,7 +108,17 @@ const PriorityTask = ({navigation}) => {
       if (res.data[0].enddate) {
         setEndDate(new Date(res.data[0].enddate).toDateString());
       }
+      let color = parseToLevelColor(res.data[0].level.toUpperCase());
+      setLevelColor(color);
       setlistItem(res.data[0].list_item)
+      if (res.data[0].list_item) {
+        setProcess(setProcessFunc(res.data[0].list_item));
+      }
+      if (res.data[0].enddate) {
+        setDeadLineTime(res.data[0].enddate);
+      }
+      setIcon(parseToIcon(res.data[0].icontype.toUpperCase()));
+      // console.log(icon);
     }
     ).catch(error => {
       console.log(error)
@@ -70,6 +135,46 @@ const PriorityTask = ({navigation}) => {
       return false;
     }
   }
+  const setProcessFunc = (array) => {
+    let progress = 0;
+    if (array) {
+      let totalItem = array.length;
+      let totalItemFinished = array.filter(item => {
+        if (item.isComplete.toUpperCase() === "YES") {
+          return true;
+        }
+      }).length;
+      progress = ((totalItemFinished / totalItem) * 100).toFixed(2);
+    };
+    return progress;
+  }
+
+  const UppdateArr = async (id, status) => {
+    let items = [...listItem];
+    let item = listItem.find(i => {
+      if (i._id === id) return true;
+    });
+    if (status) {
+      item.isComplete = "Yes"
+    } else {
+      item.isComplete = "No"
+    }
+    let index = items.findIndex(item => item._id === id);
+    items[index] = item;
+    setlistItem(items);
+    setProcess(setProcessFunc(listItem));
+    // console.log(prs);
+  }
+  
+  const UpdateState = async() =>{
+      listItem.map(item=>{
+        const res = updateStatusItem(item._id, item.isComplete);
+      })
+      setOK(true);
+      setMessage("Update is successfully");
+  }
+
+
   useEffect(() => {
     // navigation.setOptions({
     //   headerShown: false,
@@ -90,18 +195,21 @@ const PriorityTask = ({navigation}) => {
         }
       >
         {isLoading ?
+          <View style={{ flex: 1, height: 500 }}>
+            <ActivityIndicator size="large" color={color.Secondary} style={{ flex: 1 }} />
+          </View> :
           <View>
-            <ActivityIndicator size="large" color="#90EE90" style={{ flex: 1 }} />
-          </View>:
-          <View>
-            <View style={{flexDirection:"row", justifyContent: "space-between", alignItems:"center"}}>
-              <Text style={styles.title}>
-                {title}
-              </Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 20 }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Icon name={icon} color={color.Primary} size={30} />
+                <Text style={styles.title}>
+                  {" "}{title}
+                </Text>
+              </View>
               <View>
-                <TouchableOpacity style={{flex:1}} onPress={()=>gotoHome()}>
-                  <Icon  name="code" color={color.Secondary} size={30} />
-                </TouchableOpacity>
+                <Pressable onPress={() => gotoHome()}>
+                  <Icon name="backspace" color={color.Primary} size={30} />
+                </Pressable>
               </View>
             </View>
             <View style={styles.timeTitle} >
@@ -126,7 +234,7 @@ const PriorityTask = ({navigation}) => {
               <View>
                 <View style={styles.timeBlock}>
                   <Text style={styles.textBlock} >
-                    0
+                    {months}
                   </Text>
                   <Text style={{ color: 'white' }}>
                     months
@@ -136,20 +244,20 @@ const PriorityTask = ({navigation}) => {
               <View>
                 <View style={styles.timeBlock}>
                   <Text style={styles.textBlock} >
-                    14
+                    {days}
                   </Text>
                   <Text style={{ color: 'white' }}>
-                    hours
+                    days
                   </Text>
                 </View>
               </View>
               <View >
                 <View style={styles.timeBlock}>
                   <Text style={styles.textBlock}>
-                    48
+                    {hours}
                   </Text>
                   <Text style={{ color: 'white' }}>
-                    minutes
+                    Hours
                   </Text>
                 </View>
               </View>
@@ -160,7 +268,7 @@ const PriorityTask = ({navigation}) => {
                 Description
               </Text>
             </View>
-            <View>
+            <View style={{ paddingHorizontal: 10 }}>
               <Text>
                 {description}
               </Text>
@@ -170,8 +278,9 @@ const PriorityTask = ({navigation}) => {
                 <Text style={styles.indexText}>
                   Progress
                 </Text>
-                <View style={styles.progressBar}>
-                  <View><Text style={{ color: 'white', fontSize: 15 }}>80%</Text></View>
+                <View >
+                  <ProgressBar progress={process / 100} color={color.Primary} style={styles.progressBar} />
+                  <Text style={{ alignSelf: "center", color: "#FFFFFF", position: "absolute", marginTop: 5 }}>{process}%</Text>
                 </View>
               </View>
             </View>
@@ -184,17 +293,23 @@ const PriorityTask = ({navigation}) => {
               <ScrollView>
                 {listItem.map(
                   (item) =>
-                    <IndexTask key={item._id} title={item.titleItem} id={item._id} status={paseStatus(item.isComplete)} />
+                    <IndexTask id={item._id} setState={true} key={item._id} updateFunc={(id, status) => UppdateArr(id, status)} title={item.titleItem} id={item._id} status={paseStatus(item.isComplete)} />
                 )}
               </ScrollView>
             </View>
+            <Pressable style={styles.finishBtn} onPress={() => UpdateState()}>
+              <Text style={styles.textBtn}>
+                Update 
+              </Text>
+            </Pressable>
           </View>
         }
-        {/* <TouchableOpacity style={styles.finishBtn}>
-          <Text style={styles.textBtn}>
-            Finish
-          </Text>
-        </TouchableOpacity> */}
+        <DialogCustom
+            visible={isOK}
+            onPressHandle={() => setOK(false)}
+            title=""
+            message={message}
+        />
       </ScrollView>
     </SafeAreaView>
   )

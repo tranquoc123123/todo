@@ -6,17 +6,17 @@ export default styles = StyleSheet.create({
     paddingRight: 10,
     paddingLeft: 10,
     flex: 1,
+    justifyContent:"center",
+    alignItems:"center"
   },
   timeTitle: {
     flexDirection: "row",
     justifyContent: "space-between",
-
   },
   title: {
-    color: color.Secondary,
+    color: color.Primary,
     fontSize: 32,
-    fontWeight: "700",
-    marginVertical: 20
+    fontWeight: "700"
   },
   timeInHour: {
     flexDirection: "row",
@@ -42,9 +42,10 @@ export default styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: color.Primary,
-    marginTop: 20,
+    marginTop: 5,
     height: 40,
     borderRadius: 8,
+    marginBottom: 60
   },
   textBtn: {
     justifyContent: "center",
@@ -81,5 +82,11 @@ export default styles = StyleSheet.create({
     fontSize: 14,
     color: "#4A4646",
     marginTop: 10
+  },
+  progressBar: {
+    transform: [{ scaleX: 1.0 }, { scaleY: 2.5 }],
+    height: 10,
+    marginTop: 10,
+    borderRadius: 5
   }
 })

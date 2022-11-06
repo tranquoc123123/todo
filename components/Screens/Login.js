@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
                 await updateToken(res.data.token);
                 await AsyncStorage.setItem('token', res.data.token)
                 await AsyncStorage.setItem('username', res.data.username)
-                await AsyncStorage.setItem('userId', res.data.userId)
+                await AsyncStorage.setItem('userid', res.data.userId)
                 await userCtx.setUser(res.data.username);
                 await console.log('login with user: ' + res.data.username)
             }).

@@ -104,8 +104,7 @@ const EditTask = ({ navigation }) => {
     const getTask = async () => {
         // await updateHeaderId('6360986eab6b9925b4ceea2b')
         setGetting(true)
-        axios.defaults.headers.common["id"] = "6360986eab6b9925b4ceea2b";
-        const res = await axios.create({ baseURL: server }).get("/todo/", {
+        const res = await axios.create({ baseURL: server , headers:{"id": "6360986eab6b9925b4ceea2b"}}).get("/todo/", {
         }).then(res => {
             // console.log("res.data: ");
             // console.log( res.data[0]);

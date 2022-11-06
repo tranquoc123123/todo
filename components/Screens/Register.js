@@ -34,10 +34,10 @@ const Register = ({ navigation }) => {
     let userNameLogin = null;
     let tokenLogin = null;
     const gotoLogin = () => {
-        nav.navigate("Login");
+        nav.navigate("LoginScreen");
     }
     const validateUsername = (Inusername) => {
-        const reg = /^[a-zA-Z0-9_-]{3,15}$/;
+        const reg =  /^(([a-zA-Z](\s|\.)?)*){3,50}$/;
         return reg.test(Inusername)
     };
     const validateEmail = (Inemail) => {
@@ -78,8 +78,8 @@ const Register = ({ navigation }) => {
         return err;
     }
     const handleLogin = async () => {
-        setLogin(false);
-        await userCtx.setUser('user', AsyncStorage.getItem('user'));
+        gotoLogin();
+        console.log("login");
     }
     const handbleSubmit = async () => {
         setIsLoading(true);
@@ -99,12 +99,10 @@ const Register = ({ navigation }) => {
                         email: email,
                         password: password
                     }).then(async (res) => {
-                        await updateToken(res.data);
+                        // await updateToken(res.data);
                         // console.log('resLogin.token: ' + resLogin.token);
-                        await AsyncStorage.setItem('token', res.data.token);
-                        await AsyncStorage.setItem('user', res.data.user);
-                        //await userCtx.setUser('user', res.data.user);
-                        //console.log(res.data);
+                        // await AsyncStorage.setItem('token', res.data.token);
+                        // await AsyncStorage.setItem('username', res.data.username);
                         await setLogin(true);
                         await setIsLoading(false);
                     }
@@ -254,7 +252,7 @@ const Register = ({ navigation }) => {
                 <DialogCustom
                     visible={login}
                     onPressHandle={() => handleLogin()}
-                    message="Sign up is success"
+                    message="Sign up is successfully"
                 />
             </View>
         </KeyboardAwareScrollView>

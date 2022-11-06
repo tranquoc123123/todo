@@ -1,5 +1,7 @@
-const parseToIcon = async({ text }) => {
-    let icon = ""
+import axios from "axios";
+import axiosIntance from "../../apis/axios";
+const parseToIcon = (text ) => {
+    let icon = "briefcase"
     switch (text) {
         case 'WORKING':
             icon = 'briefcase';
@@ -21,7 +23,7 @@ const parseToIcon = async({ text }) => {
     }
     return icon;
 }
-const parseToLevelColor = async({ text }) => {
+const parseToLevelColor = ( text ) => {
     let color = ""
     switch (text) {
         case 'NORMAL':
@@ -41,6 +43,11 @@ const parseToLevelColor = async({ text }) => {
     }
     return color;
 }
+const updateStatusItem = async( id, status ) => {
+    const res = await axiosIntance.put('/item/' + id, { isComplete: status }, {}).catch(err => {
+        console.log(err);
+    });
+    return res;
+}
 
-
-export { parseToIcon, parseToLevelColor };
+export { parseToIcon, parseToLevelColor, updateStatusItem };

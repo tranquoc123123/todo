@@ -12,6 +12,8 @@ import { LogBox } from 'react-native';
 import PriorityTask from './components/Screens/PriorityTask';
 import LoginScreen from './components/Screens/Login';
 import Register from './components/Screens/Register';
+import StackAuth from './components/Routes/StackScreens';
+import DailyTask from './components/Screens/DailyTask';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs()
 export default function App() {
@@ -31,11 +33,12 @@ export default function App() {
   return (
     <AuthContext.Provider value={{ user: user, setUser: setUser }}>
       <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
         {user && <Stack.Screen name="Home" component={BottomTabBar} /> }
-        {!user && <Stack.Screen name="Login" component={LoginScreen} />}
+        {!user && <Stack.Screen name="LoginScreen"  component={LoginScreen}/>  }
         <Stack.Screen name="PriorityTask" component={PriorityTask} />
         <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="DailyTask" component={DailyTask} />
       </Stack.Navigator>
         {/* {user && <BottomTabBar navigation={{ headerShown: false }} />}
         {!user && <StackScreens />} */}

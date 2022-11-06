@@ -2,8 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback } fr
 import React, { useEffect,useState } from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { useNavigation } from '@react-navigation/native'
-
+import { useNavigation } from '@react-navigation/native';
 
 const TaskCard = ({id, days, progress, title, bgc, icon }) => {
     const [idTask, setIdTask] = useState();

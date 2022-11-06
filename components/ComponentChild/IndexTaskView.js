@@ -3,29 +3,20 @@ import React, { useEffect, useState } from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from '../StyleSheet/color';
-const IndexTask = ({ status, title, id, type, bgc, updateFunc, setState }) => {
-    const [isSelect, setSelect] = useState(false);
-    useEffect(() => {
-        setSelect(status)
-    }, [])
-
+import { useNavigation } from '@react-navigation/native'
+const IndexTaskView= ({ status, title, id, type, bgc, updateFunc, setState }) => {
+    const [idItem, setIdItem] = useState();
+    const nav = useNavigation();
     const handlePress = () => {
-        let status = false;
-        if (setState) {           
-            {
-                isSelect ? status = false : status = true
-            }
-            setSelect(status);
-        }
-        updateFunc(id, status);
+        nav.navigate("DailyTask", {id: id}); 
     }
     return (
         <Pressable onPress={handlePress}>
             <View style={styles.container}>
-                <Text style={isSelect ? styles.text : styles.text1} >{title}</Text>
+                <Text style={status ? styles.text : styles.text1} >{title}</Text>
                 <View style={styles.circle}>
                     {
-                        isSelect ?
+                        status ?
                             <View style={{
                                 height: 20,
                                 width: 20,
@@ -80,4 +71,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default IndexTask;
+export default IndexTaskView;
