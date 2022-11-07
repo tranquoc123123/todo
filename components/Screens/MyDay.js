@@ -1,118 +1,184 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, ScrollView, ImageBackground, StyleSheet, Pressable } from "react-native";
-
-import styles from "../StyleSheet/TodoScreen";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import React from 'react';
+import { Text, View, SafeAreaView, Dimensions, Animated, TouchableOpacity,  } from 'react-native';
 
 
-const MyDay = () => {
-  const [inputDay, setInputDay] = useState('');
-  const [getList, setList] = useState([]);
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
+const width = Dimensions.get('window').width;
+const ITEM_SIZE = width * 0.167;
+const ITEM_SPACING = (width - ITEM_SIZE) / 2;
 
- 
-
-  const addItem = () => {
-    // console.log(inputDay);
-    if (inputDay === '') {
-      // console.log(inputDay);
-      alert('Please input your tasks!');
-
-    } else {
-      setList([
-        ...getList,
-        { 
-          key: Math.random().toString(), 
-          data: inputDay,
-        }
-      ]);
-      setInputDay('');
-      console.log(getList)
-
-    }
-
+function getDaysInMonth(month, year) {
+  var date = new Date(year, month, 1);
+  var days = [];
+  while (date.getMonth() === month) {
+    days.push(new Date(date));
+    date.setDate(date.getDate() + 1);
   }
-
-  const removeItem = (itemkey) => {
-    var newList = getList.filter(item => item.key !== itemkey);
-    setList(newList);
-    // console.log(newList);
-  }
-
-
-  return (
-    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <ImageBackground
-        style={{
-          width: '100%',
-          height: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        source={{ uri: 'asset:/images/sky phone wallpaper.jpg' }}
-      >
-        <View style={{ flexDirection: "row", padding: 15 }}>
-          <TextInput
-            style={styles.inputBorder}
-            placeholder="Input your tasks..."
-            placeholderTextColor={'#fff'}
-            onChangeText={text => setInputDay(text)}
-            value={inputDay}
-          />
-          <TouchableOpacity
-            onPress={addItem}
-            style={styles.addBtn}
-            activeOpacity={0.7}
-          >
-            <Text style={{ color: '#fff', fontSize: 28 }}>+</Text>
-          </TouchableOpacity>
-
-        </View>
-        <View>
-          <Text>{inputDay}</Text>
-        </View>
-        <ScrollView contentContainerStyle={styleScrollView.contentContainer}>
-          {getList.map((item) =>
-            <TouchableOpacity
-              key={item.key}
-              activeOpacity={0.7}
-              style={styles.itemContainer}
-            >      
-
-              <Text style={styles.itemTitle}>{item.data}</Text>
-              <TouchableOpacity
-                onPress={() => removeItem(item.key)}
-                style={{ padding: 10 }}
-              >
-                <MaterialIcons name={'delete-outline'} color={'#7097a4'} size={30} />
-              </TouchableOpacity>
-            </TouchableOpacity>)
-          }
-
-        </ScrollView>
-
-      </ImageBackground>
-
-    </View>
-  )
+  return days;
 };
 
-const styleScrollView = StyleSheet.create({
-  contentContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 40,
-    width: '100%',
-  },
-  checkBox: {
-    height: 25,
-    width: 25,
-    borderColor: '#7097a4',
-    borderWidth: 2.5,
-    borderRadius: 50,
-    marginTop: 13,
+const convertNumberToDate = {
+  0: 'Mon',
+  1: 'Tue',
+  2: 'Wed',
+  3: 'Thu',
+  4: 'Fri',
+  5: 'Sat',
+  6: 'Sun',
+}
+const DAYS_IN_MONTH = getDaysInMonth(10, 2022).map((item) => {
+  return {
+    title: convertNumberToDate[new Date(item).getDay()],
+    content: new Date(item).getDate()
   }
+});
 
-})
+export default function MyDay() {
+  const calendarRef = React.useRef();
+  const scrollX = React.useRef(new Animated.Value(0)).current;
+  const [activeIndex, setActiveIndex] = React.useState(0);
 
-export default MyDay;
+  return (
+    <SafeAreaView style={{
+      paddingRight: 10,
+      paddingLeft: 10,
+      paddingTop: 20
+    }}>
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingRight: 15,
+        paddingLeft: 15,
+
+      }}>
+        <TouchableOpacity style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <Icon name={'calendar-alt'} color={'#223671'} size={25} />
+          <View>
+            <Text style={{
+              color: 'black',
+              fontSize: 25, fontWeight: '500',
+              textDecorationLine: 'underline',
+              paddingLeft: 5
+            }}>
+              Nov, 2022
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={{
+          justifyContent: 'center',
+          height: 32,
+          width: 90,
+          borderRadius: 8,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#223671',
+          flexDirection: 'row',
+
+        }}>
+          <AntDesign name={'plus'} color={'#ffffff'} size={18} />
+          <Text style={{ color: '#ffffff', marginLeft: 3 }}>Add Task</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Animated.FlatList
+        ref={calendarRef}
+        data={DAYS_IN_MONTH}
+        keyExtractor={({ content }) => content.toString()}
+        bounces={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: true }
+        )}
+        contentContainerStyle={{ paddingHorizontal: ITEM_SPACING }}
+        snapToInterval={DAYS_IN_MONTH.length}
+        decelerationRate="normal"
+        style={{ flexGrow: 0 }}
+        onMomentumScrollEnd={(ev) => {
+          const index = Math.round(ev.nativeEvent.contentOffset.x / ITEM_SIZE);
+          setActiveIndex(index);
+        }}
+        renderItem={({ item, index }) => {
+          const { title, content } = item;
+          const inputRange = [
+            (index - 2) * ITEM_SIZE,
+            (index - 1) * ITEM_SIZE,
+            index * ITEM_SIZE,
+            (index + 1) * ITEM_SIZE,
+            (index + 2) * ITEM_SIZE
+          ];
+
+          const scale = scrollX.interpolate({
+            inputRange,
+            outputRange: [.8, .8, 1, .8, .8]
+          });
+          return (
+            <Animated.View style={{
+              transform: [{
+                scale
+              }],
+              height: ITEM_SIZE,
+              width: ITEM_SIZE,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: activeIndex === index ? '#223671' : '#c1cef4',
+              borderRadius: 8,
+              borderColor: '#223671',
+              marginTop: 30,
+              marginBottom: 30,
+
+            }}>
+              <TouchableOpacity style={{
+                height: ITEM_SIZE,
+                width: ITEM_SIZE,
+                justifyContent: 'center',
+                alignItems: 'center',
+
+              }}
+                onPress={() => {
+                  calendarRef.current.scrollToOffset({
+                    offset: index * ITEM_SIZE
+                  })
+                }}
+              >
+                <Text>
+                  {title}
+                </Text>
+                <Text style={{
+                  fontSize: 19,
+                  fontWeight: '600'
+                }}>
+                  {content}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )
+        }}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingLeft: 40,
+        paddingRight: 40
+    }}>
+        <TouchableOpacity>
+          <Text>Priority Task</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Text>Daily Task</Text>
+        </TouchableOpacity>
+      </View>
+
+    </SafeAreaView >
+  );
+}
