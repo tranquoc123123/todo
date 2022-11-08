@@ -202,6 +202,7 @@ const Home = ({ navigation }) => {
     navigation.setOptions({
       headerShown: false,
     });
+    setIsLoading(true)
     IntLoad();
     getTask();
     getDailyTask();

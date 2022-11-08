@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, View, SafeAreaView, Dimensions, Animated, TouchableOpacity,  } from 'react-native';
+import { Text, View, SafeAreaView, Dimensions, Animated, TouchableOpacity, Pressable } from 'react-native';
 
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import AntDesign from 'react-native-vector-icons/AntDesign'
-
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
+import color from '../StyleSheet/color';
 const width = Dimensions.get('window').width;
 const ITEM_SIZE = width * 0.167;
 const ITEM_SPACING = (width - ITEM_SIZE) / 2;
@@ -39,6 +40,7 @@ export default function MyDay() {
   const calendarRef = React.useRef();
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const nav = useNavigation();
 
   return (
     <SafeAreaView style={{
@@ -71,20 +73,20 @@ export default function MyDay() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={{
+        <Pressable style={{
           justifyContent: 'center',
           height: 32,
           width: 90,
           borderRadius: 8,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#223671',
+          backgroundColor: color.Primary,
           flexDirection: 'row',
 
-        }}>
+        }}  onPress={()=>nav.navigate("AddTask")}>
           <AntDesign name={'plus'} color={'#ffffff'} size={18} />
           <Text style={{ color: '#ffffff', marginLeft: 3 }}>Add Task</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <Animated.FlatList

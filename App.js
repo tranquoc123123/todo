@@ -16,6 +16,7 @@ import StackAuth from './components/Routes/StackScreens';
 import DailyTask from './components/Screens/DailyTask';
 import MyProfile from './components/Screens/MyProfile';
 import Profile from './components/Screens/Profile';
+import AddTask from './components/Screens/AddTask';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs()
 export default function App() {
@@ -42,6 +43,7 @@ export default function App() {
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="DailyTask" component={DailyTask} />
         <Stack.Screen name="MyProfile" component={MyProfile} />
+        <Stack.Screen name="AddTask" component={AddTask} />
       </Stack.Navigator>
         {/* {user && <BottomTabBar navigation={{ headerShown: false }} />}
         {!user && <StackScreens />} */}
