@@ -183,7 +183,7 @@ const PriorityTask = ({ navigation }) => {
     // });
     getDetail();
   }
-    , [])
+  , [])
   return (
     <SafeAreaView style={styles.body}>
       <ScrollView

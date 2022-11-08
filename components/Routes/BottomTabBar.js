@@ -65,7 +65,7 @@ const BottomTabBar = ({ navigation }) => {
 
       /> */}
       <Tab.Screen
-        name={"User"}
+        name={"Profile"}
         component={Profile}
         options={{
           tabBarIcon: ({ color }) => (<Icon name={'user-alt'} color={color} size={30} />)

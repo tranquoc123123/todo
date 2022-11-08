@@ -151,7 +151,6 @@ const Home = ({ navigation }) => {
     }).then(
       res => {
         setDataTask(res.data)
-        setIsLoading(false)
       }
     ).catch(error => {
       console.log(error)
@@ -206,6 +205,7 @@ const Home = ({ navigation }) => {
     IntLoad();
     getTask();
     getDailyTask();
+    setIsLoading(false)
   }, [])
   return (
     <View style={styles.container} >
