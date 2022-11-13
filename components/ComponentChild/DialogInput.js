@@ -4,21 +4,28 @@ import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from '../StyleSheet/color';
 import { Dialog } from 'react-native-simple-dialogs';
-const DialogCustom = ({ message, onPressHandle, visible, title }) => {
+
+const DialogInput = ({ message, onOK, onCancle, visible, title, setValue }) => {
     return (
         <Dialog
             visible={visible}
             title={title}
-            onTouchOutside={() => onPressHandle()}
+            onTouchOutside={()=>onCancle()}
             message={message}
+            style={{borderRadius: 20}}
+            borderRadius={20}
         >
             <View style={styles.container}>
-                <Text style={{ color: color.Primary, fontSize: 16 }} color={color.Primary} > {message} </Text>
-                <TouchableOpacity onPress={() => {onPressHandle()}} style={styles.button}>
-                    <Text style={{ color: "#ffffff" }}>OK</Text>
+                <View style={{alignItems:"flex-start", justifyContent:"flex-start",width:"100%" }}>
+                    <TextInput placeholder='Type something...' style={styles.input}  onChangeText={text=>setValue(text)}/>
+                </View>
+                <TouchableOpacity onPress={() => {onOK() }} style={styles.button}>
+                    <Text style={{ color: "#ffffff" }}>Add task</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { onCancle() }} style={styles.button}>
+                    <Text style={{ color: "#ffffff" }}>Cancle</Text>
                 </TouchableOpacity>
             </View>
-            {/* <Button onPress={()=>setOK(false)} title ="OK" containerStyle={{marginVertical: 30}} /> */}
         </Dialog>
     );
 }
@@ -38,13 +45,21 @@ const styles = StyleSheet.create({
         alignItems: "center",
         height: 48,
         marginVertical: 10,
-        borderRadius: 5
+        borderRadius: 10
     },
     message: {
         color: color.Primary,
         fontSize: 16
     },
+    input:{
+        borderRadius: 10,
+        borderWidth: 0.2,
+        borderColor: color.Primary,
+        width: "100%",
+        paddingHorizontal: 10
+    }
+
 });
 
 
-export default DialogCustom;
+export default DialogInput;

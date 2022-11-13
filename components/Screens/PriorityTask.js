@@ -112,7 +112,7 @@ const PriorityTask = ({ navigation }) => {
       let color = parseToLevelColor(res.data[0].level.toUpperCase());
       setLevelColor(color);
       setlistItem(res.data[0].list_item)
-      if (res.data[0].list_item) {
+      if (res.data[0].list_item && res.data[0].list_item.length > 0) {
         setProcess(setProcessFunc(res.data[0].list_item));
       }
       if (res.data[0].enddate) {

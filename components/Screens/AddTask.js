@@ -12,6 +12,17 @@ import DialogCustom from '../ComponentChild/Dialog';
 import axios from "axios";
 import { updateHeaderId } from '../../apis/axios';
 import { server } from '../../apis/server';
+import { Pressable } from 'react-native';
+import { Dialog } from 'react-native-paper';
+import DialogInput from '../ComponentChild/DialogInput';
+import DiaglogEdit from '../ComponentChild/DialogEdit';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { Levels } from '../ComponentChild/CommonFunction';
+import { types } from '../ComponentChild/CommonFunction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { parseToIcon } from '../ComponentChild/CommonFunction';
+import DialogBack from '../ComponentChild/DialogBack';
+
 const todoItem = ({ item }) => {
     return (
         <TextInput value={item.title} />
@@ -24,14 +35,42 @@ const AddTask = ({ navigation }) => {
     const [endDateStr, setEndDateStr] = useState(new Date().toDateString());
     const [openStart, setOpenStart] = useState(false);
     const [openEnds, setOpenEnds] = useState(false);
-    const [title, setTitle] = useState();
-    const [description, setDescription] = useState();
+    const [title, setTitle] = useState("Title");
+    const [description, setDescription] = useState("Description");
     const [isOK, setOK] = useState(false);
+    const [isOkBack, setOkBack] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isGetting, setGetting] = useState(true);
+    const [isPriority, setPriority] = useState(true);
+    const [isShowDialog, setShowDialog] = useState(false);
+    const [isShowDialogEdit, setShowDialogEdit] = useState(false);
     const [message, setMessage] = useState();
+    const [titleItem, setTitleItem] = useState();
     const [listItem, setListItem] = useState([]);
+    const [idUpdate, setIdUpdate] = useState();
     const route = useRoute();
+    const nav = useNavigation();
+    const [userId, setIdUser] = useState();
+    const [open, setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
+    const [level, setLevel] = useState('normal');
+    const [typeIcon, setTypeIcon] = useState('coding');
+
+    const [items, setItems] = useState([
+        { label: 'Normal', value: 'normal' },
+        { label: 'Important', value: 'important' },
+        { label: 'Urgency', value: 'Urgency' }
+    ]);
+    const [items2, setItems2] = useState([
+        { label: 'Coding', value: 'coding' },
+        { label: 'Design', value: 'design' },
+        { label: 'Reading', value: 'Reading' },
+        { label: 'Learning', value: 'learning' },
+        { label: 'Orther', value: 'orther' },
+    ]);
+
+
+
     const onChange = (event, selectedDate) => {
         // const currentDate = selectedDate || date;
         // setDate(currentDate);
@@ -49,115 +88,29 @@ const AddTask = ({ navigation }) => {
         };
     };
 
-    const updateTodoList = async () => {
-        let cnt = 0;
-        await listItem.map(item => {
-            const res_1 = axiosIntance.put("/item/" + item._id, {
-                titleItem: item.titleItem
-            }, {}).catch(err => {
-                let cnt = cnt + 1;
-            })
-        })
-        if (cnt === 0) {
-            setMessage("Update is sucessfully");
-        } else {
-            setMessage("Have a error when on updation");
-        }
-
-        setOK(true);
-        return;
-    }
-
-    const UpdateHandle = async () => {
-        setIsLoading(true);
-        if (await Validateting() === true) {
-            const res = await axiosIntance.put("/todo", {
-                title: title,
-                startdate: startDate,
-                enddate: endDate,
-                description: description
-            },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'id': '6360986eab6b9925b4ceea2b',
-                    }
-                },
-            ).then(res => {
-                updateTodoList();
-            }
-            ).catch(error => {
-                console.log(error);
-                setMessage(error.messaage);
-                setOK(true);
-            }).finally(() => {
-                // setIsLoading(false)
-                setOK(true);
-            });
-        } else {
-            setOK(true);
-        }
-        setIsLoading(false);
-    };
-
-
-    const getTask = async () => {
-        // await updateHeaderId('6360986eab6b9925b4ceea2b')
-        setGetting(true)
-        const res = await axios.create({ baseURL: server , headers:{"id": "6360986eab6b9925b4ceea2b"}}).get("/todo/", {
-        }).then(res => {
-            // console.log("res.data: ");
-            // console.log( res.data[0]);
-            setTitle(res.data[0].title);
-            setDescription(res.data[0].description);
-            if (res.data[0].startdate) {
-                setStartDate(new Date(res.data[0].startdate));
-                setStartDateStr(new Date(res.data[0].startdate).toDateString());
-            }
-            if (res.data[0].enddate) {
-                setEndDate(new Date(res.data[0].enddate));
-                setEndDateStr(new Date(res.data[0].enddate).toDateString());
-            }
-            // setListItem(res.data[0].l)
-            console.log(JSON.stringify(res.data[0]));
-            setListItem(res.data[0].list_item);
-            //setStartDateStr(Date.parse(res.data[0].startDate).toDateString());
-            // setEndDate(res.data[0].enddate);
-            // setEndDateStr(res.data[0].enddate.toDateString());
-        }
-        ).catch(error => {
-            console.log(error)
-        }).finally(() => {
-            // setIsLoading(false)
-            setGetting(false)
-        });
-    };
-
     const Validateting = async () => {
         let result = true;
         let cnt = 0;
         if (!title) {
             result = false;
-            await setMessage('Please input the title');
+             setMessage('Please input the title');
         }
         if (!description) {
-            await setMessage('Please input the description');
-            result = false;
-        }
-        listItem.map(item => {
-            if (!item.titleItem) {
-                cnt = cnt + 1;
-            }
-        })
-        if (cnt !== 0) {
-            await setMessage('Please input all title of list todo');
+             setMessage('Please input the description');
             result = false;
         }
         if (endDate.getTime() < startDate.getTime()) {
-            await setMessage('The end date must be greater than the start date');
+             setMessage('The end date must be greater than the start date');
             result = false;
         }
-        console.log(message);
+        if (isPriority == true) {
+            console.log("lengthitem: " + listItem.length);
+            if (listItem.length === 0) {
+                setMessage('Please input the todo list');
+                result = false;
+            }
+            console.log(message);
+        }
         return result;
 
     }
@@ -167,19 +120,93 @@ const AddTask = ({ navigation }) => {
         setEndDate(new Date());
         setStartDateStr(new Date().toDateString());
         setEndDateStr(new Date().toDateString());
+        setIdUser(await AsyncStorage.getItem("userid"));
+    }
+    const handleEdit = () => {
+        if (titleItem) {
+            var items = [...listItem];
+            var item = items.find((item) => { if (item.id === idUpdate) return true });
+            item.titleItem = titleItem;
+            var index = items.findIndex(item => { item.id === idUpdate });
+            items[index] = item;
+            setListItem(items);
+            setShowDialogEdit(false);
+        }
+    }
+    const handleDelete = () => {
+        var items = [...listItem]
+        console.log("idupdate: " + idUpdate);
+        items = items.filter(item => item.id !== idUpdate);
+        setTitleItem("");
+        setListItem(items);
+        setShowDialogEdit(false);AsyncStorage
     }
 
-    const handlePress = async (text, id) => {
-        // console.log(e.value);
-        let items = [...listItem];
-        let item = await listItem.find(i => {
-            if (i._id === id) return true;
-        })
-        item.titleItem = text;
-        console.log(item);
-        let index = await listItem.findIndex(item => item._id === id);
-        items[index] = item;
-        setListItem(items);
+    const CreateTaskHandle = async () => {
+        setIsLoading(true);
+        console.log("create task handle");
+        if ( await Validateting() === true) {
+            var body = {};
+            body.complete = 'no';
+            body.description = description;
+            body.startdate = new Date(startDate.setHours(0, 0, 0, 0));
+            body.enddate = new Date(endDate.setHours(23, 59, 59, 999));
+            body.level = level;
+            body.title = title;
+            body.userId = userId;
+            if (!isPriority) {
+                body.type = "daily";
+                body.list_item = [{}];
+            } else {
+                body.type = "priority"
+                body.list_item = listItem;
+                body.icontype = typeIcon;
+            }
+            console.log(body);
+            const res = await axiosIntance.post("/todo", body).then((res)=>{
+                setMessage("Create task sucessfully")
+                setOkBack(true);
+            }
+            ).catch( err=>
+                {
+                    setMessage("Has a error when create task, try again.")
+                    console.log(err);
+                }
+            ).finally(()=>{
+                setOK(true);
+                setIsLoading(false);
+            });
+        } else{
+            setOK(true);
+            setIsLoading(false);
+        }
+    }
+    const handlleOnCancle = () => {
+        setTitleItem("");
+        setShowDialog(false);
+    }
+    const handleOK = async () => {
+        if (titleItem) {
+            var arr = [...listItem];
+            var item = { id: 0, titleItem: "" };
+            var maxid = 0;
+            if (!arr) {
+                arr = [{}];
+            }
+            if (arr.length === 0) {
+                item.id = 1;
+                item.titleItem = titleItem;
+                arr[0] = item;
+            } else {
+                maxid = Math.max(...arr.map(item => item.id)) + 1;
+                item.id = maxid;
+                item.titleItem = titleItem;
+                arr.push(item);
+            }
+            setListItem(arr);
+            setShowDialog(false);
+            setTitleItem("");
+        }
     }
 
     useEffect(() => {
@@ -189,7 +216,7 @@ const AddTask = ({ navigation }) => {
         // IntLoad();
         // setGetting(true);
         init();
-        getTask();
+        // getTask();
         setGetting(false);
         // setDataTask(data);
     }, [])
@@ -200,9 +227,9 @@ const AddTask = ({ navigation }) => {
             </View>
             <View style={styles.header}>
                 <View style={{ flex: 1 }}>
-                    <TouchableOpacity style={styles.buttonBack}>
+                    <Pressable style={styles.buttonBack} onPress={() => { nav.navigate("My Day") }}>
                         <Icon name="arrow-left" color={color.Primary} size={20} />
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                     <Text style={{ fontSize: 16, color: "#ffffff", fontWeight: "bold" }}>Add Task</Text>
@@ -218,9 +245,9 @@ const AddTask = ({ navigation }) => {
                     </View>
                     :
                     <View>
-                        <View style={{ flexDirection: "row", justifyContent: "center", marginVertical: 20, alignItems: "center" }}>
-                            <Icon name="code" color={color.Primary} size={32} />
-                            <Text style={{ color: color.Primary, fontSize: 32, fontWeight: "bold" }}>{' '}{title}</Text>
+                        <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginVertical: 20, alignItems: "center" }}>
+                            {isPriority && <Icon name={parseToIcon(typeIcon.toUpperCase())} color={color.Primary} style={{ marginRight: 10 }} size={32} />}
+                            <Text style={styles.title}>{title}</Text>
                         </View>
                         <View style={{ flexDirection: "row" }}>
                             <View style={{ flex: 1 }}>
@@ -242,9 +269,14 @@ const AddTask = ({ navigation }) => {
                             <Text style={styles.indextext}>
                                 Category
                             </Text>
-                            <TouchableOpacity style={styles.buttonEnable} >
-                                <Text style={{ color: "#ffffff" }}>Priority Task</Text>
-                            </TouchableOpacity>
+                            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                                <Pressable style={isPriority ? styles.buttonEnable : styles.buttonDisable} onPress={() => setPriority(true)} >
+                                    <Text style={isPriority ? { color: "#ffffff" } : { color: color.Primary }}>Priority Task</Text>
+                                </Pressable>
+                                <Pressable style={!isPriority ? styles.buttonEnable : styles.buttonDisable} onPress={() => setPriority(false)}  >
+                                    <Text style={!isPriority ? { color: "#ffffff" } : { color: color.Primary }}>Daily Task</Text>
+                                </Pressable>
+                            </View>
                         </View>
                         <View style={{ marginVertical: 10 }}>
                             <Text style={styles.indextext}>
@@ -252,26 +284,55 @@ const AddTask = ({ navigation }) => {
                             </Text>
                             <TextInput placeholder='Description' style={styles.input2} defaultValue={description} onChangeText={(text) => { setDescription(text) }} multiline={true} numberOfLines={4} />
                         </View>
-                        <View style={{ marginVertical: 10 }}>
-                            <Text style={styles.indextext}>
-                                List To Do
-                            </Text>
-                            <View style={{ flex: 1 }}>
-                                {
-                                    listItem.map((item) => (
-                                        <TextInput key={item._id} value={item.titleItem} style={{ borderWidth: 0.2, marginTop: 5, borderRadius: 5, paddingHorizontal: 15 }} onChangeText={text => handlePress(text, item._id)} />
-                                    ))
-                                }
+                        {isPriority &&
+                            <View style={{ marginVertical: 10 }}>
+                                <View style={{ marginVertical: 10, zIndex: 2 }}>
+                                    <Text style={styles.indextext}>
+                                        Level of task
+                                    </Text>
+                                    <DropDownPicker
+                                        open={open}
+                                        value={level}
+                                        items={items}
+                                        setOpen={setOpen}
+                                        setValue={setLevel}
+                                        setItems={setItems}
+                                    />
+                                </View>
+                                <View style={{ marginVertical: 10, zIndex: 1 }}>
+                                    <Text style={styles.indextext}>
+                                        Type of task
+                                    </Text>
+                                    <DropDownPicker
+                                        open={open2}
+                                        value={typeIcon}
+                                        items={items2}
+                                        setOpen={setOpen2}
+                                        setValue={setTypeIcon}
+                                        setItems={setItems2}
+                                    />
+                                </View>
+                                <Text style={styles.indextext}>
+                                    To do list
+                                </Text>
+                                <View style={{ flex: 1 }}>
+                                    {
+                                        listItem.map((item) => (
+                                            <Pressable onPress={() => { setShowDialogEdit(true); setTitleItem(item.titleItem); setIdUpdate(item.id) }}>
+                                                <View pointerEvents="none" >
+                                                    <TextInput contextMenuHidden={true} id={item.id} key={item.id} value={item.titleItem} style={styles.itemstodo} />
+                                                </View>
+                                            </Pressable>
+                                        ))
+                                    }
+                                </View>
+                                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                                    <TouchableOpacity style={styles.buttonEnable2} onPress={() => setShowDialog(true)}>
+                                        <Text style={{ color: color.Primary }}> + Add to do </Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
-                        <View style={{ marginVertical: 20 }}>
-                            <TouchableOpacity style={styles.buttonEnable} onPress={() => UpdateHandle()} >
-                                {isLoading ?
-                                    <ActivityIndicator size="large" color="#90EE90" /> :
-                                    <Text style={{ color: "#ffffff" }}> Update </Text>
-                                }
-                            </TouchableOpacity>
-                        </View>
+                        }
                         {
                             openStart && (<DateTimePicker
                                 testID="dateTimePicker"
@@ -308,6 +369,35 @@ const AddTask = ({ navigation }) => {
                     title=""
                     message={message}
                 />
+                <DialogInput
+                    visible={isShowDialog}
+                    onCancle={() => handlleOnCancle()}
+                    onOK={() => handleOK()}
+                    setValue={(text) => { setTitleItem(text) }}
+                />
+                <DiaglogEdit
+                    visible={isShowDialogEdit}
+                    onCancle={() => setShowDialogEdit(false)}
+                    onEdit={() => handleEdit()}
+                    onDelete={() => handleDelete()}
+                    setValue={(text) => { setTitleItem(text) }}
+                    value={titleItem}
+                />
+
+                <DialogBack                     
+                    visible={isOkBack}
+                    onPressBack={() => nav.navigate("My Day")}
+                    title=""
+                    message={message} />
+
+                <View style={{ marginBottom: 100, justifyContent: "center", alignItems: "center" }}>
+                    <TouchableOpacity style={styles.buttonEnable1} onPress={() => CreateTaskHandle()} >
+                        {isLoading ?
+                            <ActivityIndicator size="large" color="#90EE90" /> :
+                            <Text style={{ color: "#ffffff" }}> Create Task </Text>
+                        }
+                    </TouchableOpacity>
+                </View>
             </View>
         </KeyboardAwareScrollView>
     )
@@ -323,7 +413,8 @@ const styles = StyleSheet.create({
         flex: 1,
         zIndex: 1,
         flexDirection: "row",
-        marginVertical: 50
+        marginVertical: 50,
+        width: "100%"
     },
     body: {
         flex: 1,
@@ -365,14 +456,45 @@ const styles = StyleSheet.create({
         borderWidth: 0.1
     },
     buttonEnable: {
-        width: 335,
+        width: 150,
         height: 50,
         borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: color.Primary,
+        marginTop: 5
+    },
+    buttonEnable1: {
+        width: "100%",
+        height: 50,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: color.Primary,
+        marginTop: 5
+    },
+    buttonEnable2: {
+        width: "100%",
+        height: 50,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: "#ffffff",
+        borderColor: color.Primary,
+        marginTop: 5,
+        borderWidth: 2,
+        borderStyle: 'dashed'
+    },
+    buttonDisable: {
+        width: 150,
+        height: 50,
+        borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 5,
-        color: '#ffffff',
+        backgroundColor: "#ffffff",
+        borderColor: color.Primary,
+        borderWidth: 0.2
     },
     input2: {
         borderRadius: 1,
@@ -380,6 +502,18 @@ const styles = StyleSheet.create({
         borderWidth: 0.1,
         textAlignVertical: 'top',
         paddingHorizontal: 15
+    },
+    itemstodo: {
+        borderWidth: 0.2,
+        marginTop: 5,
+        borderRadius: 5,
+        paddingHorizontal: 15,
+        borderColor: color.Primary
+    },
+    title: {
+        color: color.Primary,
+        fontSize: 32,
+        fontWeight: "bold"
     },
 })
 

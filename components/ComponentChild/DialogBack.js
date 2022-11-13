@@ -4,18 +4,18 @@ import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from '../StyleSheet/color';
 import { Dialog } from 'react-native-simple-dialogs';
-const DialogCustom = ({ message, onPressHandle, visible, title }) => {
+const DialogBack = ({ message, onPressBack, visible, title }) => {
     return (
         <Dialog
             visible={visible}
             title={title}
-            onTouchOutside={() => onPressHandle()}
+            onTouchOutside={() => onPressBack()}
             message={message}
         >
             <View style={styles.container}>
                 <Text style={{ color: color.Primary, fontSize: 16 }} color={color.Primary} > {message} </Text>
-                <TouchableOpacity onPress={() => {onPressHandle()}} style={styles.button}>
-                    <Text style={{ color: "#ffffff" }}>OK</Text>
+                <TouchableOpacity onPress={() => {onPressBack()}} style={styles.button}>
+                    <Text style={{ color: "#ffffff" }}>Back</Text>
                 </TouchableOpacity>
             </View>
             {/* <Button onPress={()=>setOK(false)} title ="OK" containerStyle={{marginVertical: 30}} /> */}
@@ -47,4 +47,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default DialogCustom;
+export default DialogBack;
