@@ -14,7 +14,6 @@ import PriorityTask from "../Screens/PriorityTask";
 const Stack = createNativeStackNavigator();
 
 const MainStack = ({navigation, route}) => {
-  console.log(route.state);
   if(route.state && route.state.index > 0) {
     navigation.setOptions({tabBarVisible:false})
   }else{

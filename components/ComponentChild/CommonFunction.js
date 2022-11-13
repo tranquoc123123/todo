@@ -30,22 +30,22 @@ const parseToIcon = (text) => {
     return icon;
 }
 const parseToLevelColor = (text) => {
-    let color = ""
+    let color = "#006EE9"
     switch (text) {
         case 'NORMAL':
-            bgc = '#006EE9';
+            color = '#006EE9';
             break;
 
         case 'URGENCY':
-            bgc = '#311F65';
+            color = '#311F65';
             break;
 
         case 'IMPORTANT':
-            bgc = '#D92C2C';
+            color = '#D92C2C';
             break;
 
         default:
-            bgc = '#006EE9';
+            color = '#006EE9';
     }
     return color;
 }

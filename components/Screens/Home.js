@@ -14,7 +14,7 @@ import { ProgressBar, MD3Colors } from 'react-native-paper';
 import IndexTaskView from "../ComponentChild/IndexTaskView";
 import axios from "axios";
 import { server } from "../../apis/server";
-const parseToIcon = (text) => {
+const parseToIcon =   (text) => {
   let icon = "briefcase"
   switch (text) {
     case 'WORKING':
@@ -39,23 +39,24 @@ const parseToIcon = (text) => {
   }
   return icon;
 }
-const parseToLevelColor = ({ text }) => {
+const parseToLevelColor = ( text ) => {
   let color = "#006EE9"
+  console.log("text:" + text); 
   switch (text) {
     case 'NORMAL':
-      bgc = '#006EE9';
+      color = '#006EE9';
       break;
 
     case 'URGENCY':
-      bgc = '#311F65';
+      color = '#311F65';
       break;
 
     case 'IMPORTANT':
-      bgc = '#D92C2C';
+      color = '#D92C2C';
       break;
 
     default:
-      bgc = '#006EE9';
+      color = '#006EE9';
   }
   return color;
 }
@@ -76,7 +77,6 @@ const taskCard = ({ item }) => {
       days = 0
     }
   }
-  // console.log(item.list_item)
   if ((item.list_item) && (item.list_item.length > 0)) {
     totalItem = item.list_item.length;
     totalItemFinished = item.list_item.filter(item => {
@@ -86,8 +86,9 @@ const taskCard = ({ item }) => {
     }).length;
     progress = ((totalItemFinished / totalItem) * 100).toFixed(2);
   };
-  icon = parseToIcon(item.icontype.toUpperCase());
+  icon =  parseToIcon(item.icontype.toUpperCase());
   bgc = parseToLevelColor(item.level.toUpperCase());
+  console.log("bgc: " + bgc);
   return (
     <TaskCard
       key={id}
@@ -152,12 +153,12 @@ const Home = ({ navigation }) => {
       // }
     }).then(
       res => {
-        setDataTask(res.data)
+        setDataTask(res.data);
       }
     ).catch(error => {
       console.log(error)
     }).finally(() => {
-
+      setIsLoading(false);
     });
   }
   const getDailyTask = async () => {
@@ -184,19 +185,17 @@ const Home = ({ navigation }) => {
         } else {
           setDailyTask([]);
         }
-        console.log(res.data);
       }
     ).catch(error => {
       console.log(error)
       setDailyTask([]);
     }).finally(() => {
-
+      setIsLoading(false);
     });
   }
   const IntLoad = async () => {
     const user = await AsyncStorage.getItem('username');
     await setUserName(user);
-    console.log(username);
     await setDate(new Date().toDateString())
   }
 

@@ -13,7 +13,8 @@ import { ProgressBar, MD3Colors } from 'react-native-paper';
 import { parseToIcon } from "../ComponentChild/CommonFunction";
 import DialogCustom from "../ComponentChild/Dialog";
 import { updateStatusItem } from "../ComponentChild/CommonFunction";
-
+import DialogBack from "../ComponentChild/DialogBack";
+import { updateStatusTask } from "../ComponentChild/CommonFunction";
 const parseToLevelColor = (text) => {
   let color = "#006EE9"
   switch (text) {
@@ -45,7 +46,7 @@ const PriorityTask = ({ navigation }) => {
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [refreshing, setRefreshing] = React.useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [levelColor, setLevelColor] = useState();
   const nav = useNavigation();
   const [process, setProcess] = useState(0);
@@ -55,6 +56,8 @@ const PriorityTask = ({ navigation }) => {
   const [icon, setIcon] = useState("briefcase");
   const [isOK, setOK] = useState(false);
   const [message, setMessage] = useState("");
+  const [isOkBack, setOkBack] = useState(false);
+
   const gotoHome = () => {
     nav.navigate("Home");
   }
@@ -63,7 +66,7 @@ const PriorityTask = ({ navigation }) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
   const setHeader = async () => {
-    return {"id": route.params.id}
+    return { "id": route.params.id }
   }
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -99,7 +102,7 @@ const PriorityTask = ({ navigation }) => {
     setIsGetting(true);
     const config = await setHeader();
     // console.log(route.params.id);
-    const res = await axios.create({ baseURL: server, headers:config }).get("/todo/", {
+    const res = await axios.create({ baseURL: server, headers: config }).get("/todo/", {
     }, {}).then(res => {
       setTitle(res.data[0].title);
       setDescription(res.data[0].description);
@@ -124,9 +127,7 @@ const PriorityTask = ({ navigation }) => {
     ).catch(error => {
       console.log(error)
     }).finally(() => {
-      // setIsLoading(false)
       setIsGetting(false)
-      setIsLoading(false)
     });
   };
   const paseStatus = (isComplete) => {
@@ -156,9 +157,9 @@ const PriorityTask = ({ navigation }) => {
       if (i._id === id) return true;
     });
     if (status) {
-      item.isComplete = "Yes"
+      item.isComplete = "yes"
     } else {
-      item.isComplete = "No"
+      item.isComplete = "no"
     }
     let index = items.findIndex(item => item._id === id);
     items[index] = item;
@@ -166,13 +167,35 @@ const PriorityTask = ({ navigation }) => {
     setProcess(setProcessFunc(listItem));
     // console.log(prs);
   }
-  
-  const UpdateState = async() =>{
-      listItem.map(item=>{
-        const res = updateStatusItem(item._id, item.isComplete);
-      })
+
+  const UpdateState = async () => {
+    var cnt = 0;
+    var completeTask = 'yes';
+    setIsLoading(true);
+    listItem.map(item => {
+      const res =  updateStatusItem(item._id, item.isComplete).catch(er => {
+        cnt = cnt + 1;
+      });
+    });
+    if (cnt === 0) {
+      listItem.map(item => {
+        if (item.isComplete.toUpperCase() === "NO") {
+          completeTask = 'no';
+        }
+      });
+      await updateStatusTask(route.params.id, completeTask).then(res => {
+        setMessage("Update is successfully");
+        setOkBack(true);
+      }).catch(err => {
+        setMessage("Have an error when update, try again!");
+        setOK(true);
+      });
+
+    } else {
+      setMessage("Have a error when update, try again!");
       setOK(true);
-      setMessage("Update is successfully");
+    }
+    setIsLoading(false);
   }
 
 
@@ -183,7 +206,7 @@ const PriorityTask = ({ navigation }) => {
     // });
     getDetail();
   }
-  , [])
+    , [])
   return (
     <SafeAreaView style={styles.body}>
       <ScrollView
@@ -195,7 +218,7 @@ const PriorityTask = ({ navigation }) => {
           />
         }
       >
-        {isLoading ?
+        {isGetting ?
           <View style={{ flex: 1, height: 500 }}>
             <ActivityIndicator size="large" color={color.Secondary} style={{ flex: 1 }} />
           </View> :
@@ -299,18 +322,26 @@ const PriorityTask = ({ navigation }) => {
               </ScrollView>
             </View>
             <Pressable style={styles.finishBtn} onPress={() => UpdateState()}>
-              <Text style={styles.textBtn}>
-                Update 
-              </Text>
+              {isLoading ?
+                <ActivityIndicator size="large" color="#90EE90" /> :
+                <Text style={styles.textBtn}>
+                  Update
+                </Text>
+              }
             </Pressable>
           </View>
         }
         <DialogCustom
-            visible={isOK}
-            onPressHandle={() => setOK(false)}
-            title=""
-            message={message}
+          visible={isOK}
+          onPressHandle={() => setOK(false)}
+          title=""
+          message={message}
         />
+        <DialogBack
+          visible={isOkBack}
+          onPressBack={() => nav.navigate("HomeScreen")}
+          title=""
+          message={message} />
       </ScrollView>
     </SafeAreaView>
   )

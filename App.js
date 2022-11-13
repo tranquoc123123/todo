@@ -17,6 +17,7 @@ import DailyTask from './components/Screens/DailyTask';
 import MyProfile from './components/Screens/MyProfile';
 import Profile from './components/Screens/Profile';
 import AddTask from './components/Screens/AddTask';
+import EditTask from './components/Screens/EditTask';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs()
 export default function App() {
@@ -44,10 +45,8 @@ export default function App() {
         <Stack.Screen name="DailyTask" component={DailyTask} />
         <Stack.Screen name="MyProfile" component={MyProfile} />
         <Stack.Screen name="AddTask" component={AddTask} />
+        <Stack.Screen name="EditTask" component={EditTask} />
       </Stack.Navigator>
-        {/* {user && <BottomTabBar navigation={{ headerShown: false }} />}
-        {!user && <StackScreens />} */}
-        {/* <StackScreens/> */}
       </NavigationContainer>
     </AuthContext.Provider>
 

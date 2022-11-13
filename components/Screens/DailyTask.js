@@ -10,6 +10,7 @@ import color from "../StyleSheet/color";
 import { updateStatusItem } from "../ComponentChild/CommonFunction";
 import DialogCustom from "../ComponentChild/Dialog";
 import { updateStatusTask } from "../ComponentChild/CommonFunction";
+import DialogBack from "../ComponentChild/DialogBack";
 const DailyTask = ({ navigation }) => {
   const [idTask, setIdTask] = useState();
   const [isGetting, setIsGetting] = useState(false);
@@ -19,7 +20,7 @@ const DailyTask = ({ navigation }) => {
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [refreshing, setRefreshing] = React.useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [levelColor, setLevelColor] = useState();
   const nav = useNavigation();
   const [process, setProcess] = useState(0);
@@ -31,13 +32,21 @@ const DailyTask = ({ navigation }) => {
   const [isOK, setOK] = useState(false);
   const [message, setMessage] = useState("");
   const route = useRoute();
-
+  const [isOkBack, setOkBack] = useState(false);
+  const [isComplete, setIsComplete] = useState(true);
 
   const UpdateState = async () => {
+    setIsLoading(true);
     console.log(idTask);
-    const res = await updateStatusTask(idTask, "yes");
-    setOK(true);
-    setMessage("Update is successfully");
+    const res = await updateStatusTask(idTask, "yes").then(res => {
+      setMessage("Update is successfully");
+      setOkBack(true);
+    }).catch(err => {
+      setMessage("Have an error when update, try again");
+      setOK(true);
+    }).finally(() => { });
+    setIsLoading(false)
+
   }
 
   const gotoHome = () => {
@@ -80,7 +89,7 @@ const DailyTask = ({ navigation }) => {
       if (hour > 0) {
         msDiff = msDiff - hour * (1000 * 60 * 60)
       }
-      let minute = Math.floor(msDiff / (1000 * 60 ));
+      let minute = Math.floor(msDiff / (1000 * 60));
       setMinutes(minute);
     } else {
       setMonth(0);
@@ -104,6 +113,12 @@ const DailyTask = ({ navigation }) => {
         setEndDate(new Date(res.data[0].enddate).toDateString());
         setDeadLineTime(res.data[0].enddate)
       }
+      if (res.data[0].isComplete) {
+        if (res.data[0].isComplete.toUpperCase() === "NO") {
+          setIsComplete(false)
+        }
+      }
+
     }
     ).catch(error => {
       console.log(error)
@@ -129,7 +144,7 @@ const DailyTask = ({ navigation }) => {
           />
         }
       >
-        {isLoading ?
+        {isGetting ?
           <View style={{ flex: 1, height: 500 }}>
             <ActivityIndicator size="large" color={color.Secondary} style={{ flex: 1 }} />
           </View> :
@@ -197,17 +212,27 @@ const DailyTask = ({ navigation }) => {
                 {description}
               </Text>
             </View>
-            <Pressable style={styles.finishBtn} onPress={() => UpdateState()}>
-              <Text style={styles.textBtn}>
-                Finish
-              </Text>
-            </Pressable>
+            {!isComplete &&
+              <Pressable style={styles.finishBtn} onPress={() => UpdateState()}>
+                {isLoading ?
+                  <ActivityIndicator size="large" color="#90EE90" /> :
+                  <Text style={styles.textBtn}>
+                    Finish
+                  </Text>
+                }
+              </Pressable>
+            }
             <DialogCustom
               visible={isOK}
               onPressHandle={() => setOK(false)}
               title=""
               message={message}
             />
+            <DialogBack
+              visible={isOkBack}
+              onPressBack={() => nav.navigate("HomeScreen")}
+              title=""
+              message={message} />
           </View>
         }
       </ScrollView>
