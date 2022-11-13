@@ -211,6 +211,8 @@ const PriorityTask = ({ navigation }) => {
     <SafeAreaView style={styles.body}>
       <ScrollView
         contentContainerStyle={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

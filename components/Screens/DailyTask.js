@@ -113,8 +113,8 @@ const DailyTask = ({ navigation }) => {
         setEndDate(new Date(res.data[0].enddate).toDateString());
         setDeadLineTime(res.data[0].enddate)
       }
-      if (res.data[0].isComplete) {
-        if (res.data[0].isComplete.toUpperCase() === "NO") {
+      if (res.data[0].complete) {
+        if (res.data[0].complete.toUpperCase() === "NO") {
           setIsComplete(false)
         }
       }

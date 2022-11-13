@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
         borderColor: color.Primary,
         borderWidth: 0.1,
         textAlignVertical: 'top',
-        paddingHorizontal: 15
+        paddingHorizontal: 5
     },
 })
 

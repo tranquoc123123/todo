@@ -151,16 +151,18 @@ const AddTask = ({ navigation }) => {
             body.description = description;
             body.startdate = new Date(startDate.setHours(0, 0, 0, 0));
             body.enddate = new Date(endDate.setHours(23, 59, 59, 999));
-            body.level = level;
             body.title = title;
             body.userId = userId;
             if (!isPriority) {
                 body.type = "daily";
                 body.list_item = [{}];
+                body.level = " ";
+                body.icontype = " ";
             } else {
                 body.type = "priority"
                 body.list_item = listItem;
                 body.icontype = typeIcon;
+                body.level = level;
             }
             console.log(body);
             const res = await axiosIntance.post("/todo", body).then((res)=>{
@@ -501,7 +503,7 @@ const styles = StyleSheet.create({
         borderColor: color.Primary,
         borderWidth: 0.1,
         textAlignVertical: 'top',
-        paddingHorizontal: 15
+        paddingHorizontal: 5
     },
     itemstodo: {
         borderWidth: 0.2,
