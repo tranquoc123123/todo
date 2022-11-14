@@ -64,9 +64,9 @@ const AddTask = ({ navigation }) => {
     const [items2, setItems2] = useState([
         { label: 'Coding', value: 'coding' },
         { label: 'Design', value: 'design' },
-        { label: 'Reading', value: 'Reading' },
+        { label: 'Reading', value: 'reading' },
         { label: 'Learning', value: 'learning' },
-        { label: 'Orther', value: 'orther' },
+        { label: 'Other', value: 'other' },
     ]);
 
 
@@ -135,7 +135,6 @@ const AddTask = ({ navigation }) => {
     }
     const handleDelete = () => {
         var items = [...listItem]
-        console.log("idupdate: " + idUpdate);
         items = items.filter(item => item.id !== idUpdate);
         setTitleItem("");
         setListItem(items);
@@ -160,7 +159,7 @@ const AddTask = ({ navigation }) => {
                 body.icontype = " ";
             } else {
                 body.type = "priority"
-                body.list_item = listItem;
+                body.listItems   = listItem;
                 body.icontype = typeIcon;
                 body.level = level;
             }
@@ -198,11 +197,13 @@ const AddTask = ({ navigation }) => {
             if (arr.length === 0) {
                 item.id = 1;
                 item.titleItem = titleItem;
+                item.isComplete ="no";
                 arr[0] = item;
             } else {
                 maxid = Math.max(...arr.map(item => item.id)) + 1;
                 item.id = maxid;
                 item.titleItem = titleItem;
+                item.isComplete ="no";
                 arr.push(item);
             }
             setListItem(arr);

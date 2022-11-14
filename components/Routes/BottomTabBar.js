@@ -20,6 +20,7 @@ const BottomTabBar = ({ navigation }) => {
   return (
     <Tab.Navigator initialRouteName='Home'
       screenOptions={{
+        showLabel: false,
         tabBarStyle: {
           height: 65,
           paddingTop: 10,
@@ -28,16 +29,11 @@ const BottomTabBar = ({ navigation }) => {
           position: 'absolute',
           elevation: 0,
         },
-        tabBarLabelStyle: {
-          marginBottom: 5,
-          paddingBottom: 5,
-          fontSize: 10,
-          fontWeight: "bold",
-        },
         tabBarActiveTintColor: color.Primary,
         tabBarInactiveTintColor: 'gray',
         headerShown: false
       }}
+      tabBarOptions ={{showLabel: false}}
     >
 
       <Tab.Screen

@@ -21,22 +21,17 @@ const todoItem = ({ item }) => {
 }
 
 const MyProfile = ({ navigation }) => {
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
-    const [startDateStr, setStartDateStr] = useState(new Date().toDateString());
-    const [endDateStr, setEndDateStr] = useState(new Date().toDateString());
     const [openStart, setOpenStart] = useState(false);
-    const [openEnds, setOpenEnds] = useState(false);
-    const [title, setTitle] = useState();
-    const [description, setDescription] = useState();
     const [isOK, setOK] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isGetting, setGetting] = useState(true);
     const [message, setMessage] = useState();
-    const [listItem, setListItem] = useState([]);
-    const [img, setImg] = useState(require('./img/image3.png'))
-    const [name, setName] = useState("name");
-    const [profession, setProfession] = useState("UI/UX Design");
+    const [img, setImg] = useState(require('./img/default.png'))
+    const [name, setName] = useState("Name");
+    const [email, setEmail] = useState("Email");
+    const [dateOfBirth, setDateOfBirth] = useState(new Date());
+    const [dateOfBirthStr, setDateOfBirthStr] = useState(new Date().toISOString().split('T')[0]);
+    const [profession, setProfession] = useState("No info");
     const nav = useNavigation();
 
     const route = useRoute();
@@ -45,35 +40,12 @@ const MyProfile = ({ navigation }) => {
         // setDate(currentDate);
         if (openStart === true) {
             setOpenStart(Platform.OS === 'ios');
-            const currentDate = selectedDate || startDate;
-            setStartDate(currentDate);
-            setStartDateStr(currentDate.toDateString());
+            const currentDate = selectedDate || dateOfBirth;
+            setDateOfBirth(currentDate);
+            setDateOfBirthStr(currentDate.toISOString().split('T')[0]);
         }
-        if (openEnds === true) {
-            setOpenEnds(Platform.OS === 'ios');
-            const currentDate = selectedDate || endDate;
-            setEndDate(currentDate);
-            setEndDateStr(currentDate.toDateString());
-        };
     };
 
-    const updateTodoList = async () => {
-        // let cnt = 0;
-        // await listItem.map(item => {
-        //     const res_1 = axiosIntance.put("/item/" + item._id, {
-        //         titleItem: item.titleItem
-        //     }, {}).catch(err => {
-        //         let cnt = cnt + 1;
-        //     })
-        // })
-        // if (cnt === 0) {
-        //     setMessage("Update is sucessfully");
-        // } else {
-        //     setMessage("Have a error when on updation");
-        // }
-        // setOK(true);
-        // return;
-    }
 
     const UpdateHandle = async () => {
         // setIsLoading(true);
@@ -106,49 +78,17 @@ const MyProfile = ({ navigation }) => {
         // }
         // setIsLoading(false);
     };
+
     const gotoProfile = () =>{
         nav.navigate("Profile");
     }
 
-
-    const getInfo = async () => {
-        // await updateHeaderId('6360986eab6b9925b4ceea2b')
-        setGetting(true)
-        const res = await axios.create({ baseURL: server , headers:{"id": "6360986eab6b9925b4ceea2b"}}).get("/todo/", {
-        }).then(res => {
-            
-        }
-        ).catch(error => {
-            console.log(error)
-        }).finally(() => {
-            // setIsLoading(false)
-            setGetting(false)
-        });
-    };
-
     const Validateting = async () => {
         let result = true;
         let cnt = 0;
-        if (!title) {
+        if (!name) {
             result = false;
-            await setMessage('Please input the title');
-        }
-        if (!description) {
-            await setMessage('Please input the description');
-            result = false;
-        }
-        listItem.map(item => {
-            if (!item.titleItem) {
-                cnt = cnt + 1;
-            }
-        })
-        if (cnt !== 0) {
-            await setMessage('Please input all title of list todo');
-            result = false;
-        }
-        if (endDate.getTime() < startDate.getTime()) {
-            await setMessage('The end date must be greater than the start date');
-            result = false;
+             setMessage('Please input the name');
         }
         console.log(message);
         return result;
@@ -156,10 +96,12 @@ const MyProfile = ({ navigation }) => {
     }
 
     const init = async () => {
-        setStartDate(new Date());
-        setEndDate(new Date());
-        setStartDateStr(new Date().toDateString());
-        setEndDateStr(new Date().toDateString());
+        setDateOfBirth(new Date(route.params.dateofbirth));
+        setDateOfBirthStr(new Date(route.params.dateofbirth).toISOString().split('T')[0]);
+        setEmail(route.params.email);
+        setName(route.params.name);
+        setProfession(route.params.profession);
+        setImg(route.params.img);
     }
 
     const handlePress = async (text, id) => {
@@ -179,12 +121,8 @@ const MyProfile = ({ navigation }) => {
         navigation.setOptions({
             headerShown: false,
         });
-        // IntLoad();
-        // setGetting(true);
         init();
-        getInfo();
         setGetting(false);
-        // setDataTask(data);
     }, [])
 
     return (
@@ -218,25 +156,25 @@ const MyProfile = ({ navigation }) => {
                             <Text style={styles.indextext}>
                                 Name
                             </Text>
-                            <TextInput placeholder='Name' style={styles.input} defaultValue={name} onChangeText={(text) => setTitle(text)} />
+                            <TextInput placeholder='Name' style={styles.input} defaultValue={name} onChangeText={(text) => setName(text)} />
                         </View>
                         <View style={styles.index}>
                             <Text style={styles.indextext}>
                                 Profession
                             </Text>
-                            <TextInput placeholder='Profession' style={styles.input} defaultValue={profession} onChangeText={(text) => setTitle(text)} />
+                            <TextInput placeholder='Profession' style={styles.input} defaultValue={profession} onChangeText={(text) => setProfession(text)} />
                         </View>
                         <View style={[{ flexDirection: "row" },styles.index]}>
                             <View style={{ flex: 1,  }}>
                                 <Text style={styles.indextext}>Date of Birth</Text>
-                                <InputDate date={startDateStr} onPress={() => { setOpenStart(true) }} />
+                                <InputDate date={dateOfBirthStr} onPress={() => { setOpenStart(true) }} />
                             </View>
                         </View>
                         <View style={styles.index}>
                             <Text style={styles.indextext}>
                                 Email
                             </Text>
-                            <TextInput placeholder='Email' style={styles.input} defaultValue={title} onChangeText={(text) => setTitle(text)} />
+                            <TextInput placeholder='Email' style={styles.input} defaultValue={email} onChangeText={(text) => setEmail(text)} />
                         </View>
                         <View style={{ marginVertical: 20 }}>
                             <TouchableOpacity style={styles.buttonEnable} onPress={() => UpdateHandle()} >
@@ -250,7 +188,7 @@ const MyProfile = ({ navigation }) => {
                             openStart && (<DateTimePicker
                                 testID="dateTimePicker"
                                 timeZoneOffsetInMinutes={0}
-                                value={startDate}
+                                value={dateOfBirth}
                                 mode="date"
                                 is24Hour={true}
                                 display="default"

@@ -51,9 +51,9 @@ const EditTask = ({ navigation }) => {
     const [items2, setItems2] = useState([
         { label: 'Coding', value: 'coding' },
         { label: 'Design', value: 'design' },
-        { label: 'Reading', value: 'Reading' },
+        { label: 'Reading', value: 'reading' },
         { label: 'Learning', value: 'learning' },
-        { label: 'Orther', value: 'orther' },
+        { label: 'other', value: 'other' },
     ]);
     const onChange = (event, selectedDate) => {
         // const currentDate = selectedDate || date;

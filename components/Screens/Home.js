@@ -41,7 +41,6 @@ const parseToIcon =   (text) => {
 }
 const parseToLevelColor = ( text ) => {
   let color = "#006EE9"
-  console.log("text:" + text); 
   switch (text) {
     case 'NORMAL':
       color = '#006EE9';
@@ -88,7 +87,6 @@ const taskCard = ({ item }) => {
   };
   icon =  parseToIcon(item.icontype.toUpperCase());
   bgc = parseToLevelColor(item.level.toUpperCase());
-  console.log("bgc: " + bgc);
   return (
     <TaskCard
       key={id}
