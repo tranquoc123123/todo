@@ -75,7 +75,7 @@ const taskCard = ({ item }) => {
     }
   }
   // console.log(item.list_item)
-  if (( item.list_item) && (item.list_item.length > 0)) {
+  if ((item.list_item) && (item.list_item.length > 0)) {
     totalItem = item.list_item.length;
     totalItemFinished = item.list_item.filter(item => {
       if (item.isComplete.toUpperCase() === "YES") {
@@ -141,8 +141,8 @@ const Home = ({ navigation }) => {
 
   const getTask = async () => {
     const userid = await AsyncStorage.getItem("userid");
-    const config = {"type": "priority", "userid": userid};
-    const res = await axios.create({ baseURL: server , headers: config }).get("/todo", {
+    const config = { "type": "priority", "userid": userid };
+    const res = await axios.create({ baseURL: server, headers: config }).get("/todo", {
       // params:{
       //     id: "62fbcb17e8588f32cbea05b7"
       // }
@@ -160,15 +160,15 @@ const Home = ({ navigation }) => {
   const getDailyTask = async () => {
     const userid = await AsyncStorage.getItem("userid");
     const now = new Date()
-    const fromdateTmp =  now.setHours(0,0,0,0);
-    const todateTmp =   now.setHours(23,59,59,999);
+    const fromdateTmp = now.setHours(0, 0, 0, 0);
+    const todateTmp = now.setHours(23, 59, 59, 999);
     const fromdate = new Date(fromdateTmp);
-    const todate =  new Date(todateTmp);
+    const todate = new Date(todateTmp);
     const config = {
-        "type": "daily",
-        "fromdate":fromdate,
-        "todate":todate,
-        "userId": userid
+      "type": "daily",
+      "fromdate": fromdate,
+      "todate": todate,
+      "userId": userid
     };
     const res = await axios.create({ baseURL: server, headers: config }).get("/todo", {
       // params:{
@@ -176,9 +176,9 @@ const Home = ({ navigation }) => {
       // }
     }).then(
       res => {
-        if (res.data){
+        if (res.data) {
           setDailyTask(res.data)
-        } else{
+        } else {
           setDailyTask([]);
         }
         console.log(res.data);

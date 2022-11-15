@@ -1,9 +1,11 @@
 import React from 'react';
-import { Text, View, SafeAreaView, Dimensions, Animated, TouchableOpacity,  } from 'react-native';
+import { Text, View, SafeAreaView, Dimensions, Animated, TouchableOpacity, } from 'react-native';
 
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
+import TabListView from '../ComponentChild/Tab';
 
 const width = Dimensions.get('window').width;
 const ITEM_SIZE = width * 0.167;
@@ -127,7 +129,7 @@ export default function MyDay() {
               width: ITEM_SIZE,
               justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: activeIndex === index ? '#223671' : '#c1cef4',
+              backgroundColor: activeIndex === index ? '#223671' : '#e8eaf0',
               borderRadius: 8,
               borderColor: '#223671',
               marginTop: 30,
@@ -162,23 +164,10 @@ export default function MyDay() {
         }}
         horizontal
         showsHorizontalScrollIndicator={false}
-      />
+      />      
+      <TabListView />
 
-      <View style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingLeft: 40,
-        paddingRight: 40
-    }}>
-        <TouchableOpacity>
-          <Text>Priority Task</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Text>Daily Task</Text>
-        </TouchableOpacity>
-      </View>
-
-    </SafeAreaView >
+    </SafeAreaView>
   );
 }
