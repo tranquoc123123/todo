@@ -1,11 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView, Dimensions, Animated, TouchableOpacity, } from 'react-native';
 
+import styles from '../StyleSheet/MyDayStyle';
+import color from '../StyleSheet/color';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import TabListView from '../ComponentChild/Tab';
+import { FlatList } from 'react-native-gesture-handler';
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { server } from "../../apis/server";
+
+
+
+const handleData = (data) => {
+  return data.reduce((obj, currentItem) => {
+    const arr = [{ ...currentItem }];
+    if (!obj?.[currentItem?.type]) {
+      obj[currentItem?.type] = arr;
+    } else {
+      obj[currentItem?.type] = [...obj?.[currentItem?.type], ...arr];
+    }
+    return obj;
+  }, {});
+};
+
+
+
+const renderPriority = ({ item, index }) => {
+
+  return (
+    <View>
+      <TouchableOpacity>
+        <Text>{item.title}</Text>
+      </TouchableOpacity>
+    </View>
+  )
+};
+
+const renderDaily = ({ item, index }) => {
+  return (
+    <View>
+      <TouchableOpacity>
+        <Text>{item.title}</Text>
+      </TouchableOpacity>
+    </View>
+  )
+};
+
+
 
 const width = Dimensions.get('window').width;
 const ITEM_SIZE = width * 0.167;
@@ -38,10 +83,54 @@ const DAYS_IN_MONTH = getDaysInMonth(10, 2022).map((item) => {
 });
 
 export default function MyDay() {
+
   const calendarRef = React.useRef();
   const scrollX = React.useRef(new Animated.Value(0)).current;
-  const [activeIndex, setActiveIndex] = React.useState(0);
 
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [status, setStatus] = useState(0);
+  const [priority, setPriority] = useState([]);
+  const [daily, setDaily] = useState([]);
+  
+
+  const setStatusActive = status => {
+    setStatus(status);
+    // console.log('you clicked : ' , status);
+  };
+  const listTab = {
+    0: {
+      title: 'Priority Task',
+      data: priority,
+      renderItem: renderPriority
+    },
+    1: {
+      title: 'Daily Task',
+      data: daily,
+      renderItem: renderDaily
+    },
+  };
+  useEffect(() => {
+    getData()
+  }, []);
+  const getData = async () => {
+    const userid = await AsyncStorage.getItem("userid");
+    const config = { "type": "priority", "userid": userid };
+    axios.create({ baseURL: server}).get("/todo", {
+      // params:{
+      //     id: "62fbcb17e8588f32cbea05b7"
+      // }
+    }).then(
+      res => {
+        const data = handleData(res.data)
+        setPriority(data?.priority || [])
+        setDaily(data?.daily || [])
+      }
+    ).catch(error => {
+      console.log(error)
+    }).finally(() => {
+
+    });
+  }
   return (
     <SafeAreaView style={{
       paddingRight: 10,
@@ -164,8 +253,35 @@ export default function MyDay() {
         }}
         horizontal
         showsHorizontalScrollIndicator={false}
-      />      
-      <TabListView />
+      />
+      {/* <TabListView /> */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        {
+          Object.keys(listTab).map(item => (
+            <TouchableOpacity
+              activeOpacity={3}
+              style={[styles.btnTab]}
+              onPress={() => setStatusActive(Number(item))}
+            >
+              <Text style={[styles.textTab, status === Number(item) && styles.textActive]}>
+                {listTab[Number(item)].title}
+              </Text>
+            </TouchableOpacity>
+          ))
+        }
+      </View>
+      <View>
+        <FlatList
+          data={listTab[status].data}
+          keyExtractor={(e, i) => i.toString()}
+          renderItem={listTab[status].renderItem}
+        />
+
+
+
+      </View>
+
+
 
 
     </SafeAreaView>

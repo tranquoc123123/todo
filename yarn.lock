@@ -5984,6 +5984,11 @@
   dependencies:
     "moment" "^2.22.0"
 
+"react-native-dropdown-picker@^5.4.3":
+  "integrity" "sha512-cwZzFcpyx/Stw3lZH2bvXxcsgwkR8c3rRZtOnlvyuN5pAplzA/9AiAxYlnJuspP9VvyU1XMePKOpgcHce6iyhA=="
+  "resolved" "https://registry.npmjs.org/react-native-dropdown-picker/-/react-native-dropdown-picker-5.4.3.tgz"
+  "version" "5.4.3"
+
 "react-native-gesture-handler@^2.3.0", "react-native-gesture-handler@^2.7.1":
   "integrity" "sha512-Rnak7U4v3ZB+vjVghv5CvAGS+UfRLsXUq7Nq+FycloxZ7jUZjBo+7rPnt+EdTIE2zc2pKhQHIQKcD+IAPg2Scg=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.7.1.tgz"

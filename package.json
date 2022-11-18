@@ -25,6 +25,7 @@
     "react-native-calendars": "^1.1291.0",
     "react-native-date-picker": "^4.2.5",
     "react-native-datepicker": "^1.7.2",
+    "react-native-dropdown-picker": "^5.4.3",
     "react-native-gesture-handler": "^2.7.1",
     "react-native-image-crop-picker": "^0.38.1",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
