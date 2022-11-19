@@ -21,11 +21,12 @@ const todoItem = ({ item }) => {
     );
 }
 const EditTask = ({ navigation }) => {
-    const [startDate, setStartDate] = useState((new Date()).setHours(0,0,0,0));
-    const [endDate, setEndDate] = useState((new Date()).setHours(23,59,59,999));
-    const [startDateStr, setStartDateStr] = useState(new Date(startDate.setHours(0,0,0,0)).toDateString());
-    const [endDateStr, setEndDateStr] = useState(new Date(endDate.setHours(23,59,59,999)).toDateString());
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [startDateStr, setStartDateStr] = useState(new Date().toDateString());
+    const [endDateStr, setEndDateStr] = useState(new Date().toDateString());
     const [openEnds, setOpenEnds] = useState(false);
+    const [openStart, setOpenStart] = useState(false);
     const [title, setTitle] = useState();
     const [description, setDescription] = useState();
     const [isOK, setOK] = useState(false);
@@ -133,7 +134,7 @@ const EditTask = ({ navigation }) => {
 
     const getTask = async () => {
         // await updateHeaderId('6360986eab6b9925b4ceea2b')
-        const res = await axios.create({ baseURL: server, headers: { "id": "6360986eab6b9925b4ceea2b" } }).get("/todo/", {
+        const res = await axios.create({ baseURL: server, headers: { "id": "637894be2eb156033334a4e5" } }).get("/todo/", {
         }).then(res => {
             // console.log("res.data: ");
             // console.log( res.data[0]);

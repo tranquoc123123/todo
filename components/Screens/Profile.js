@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { View, Text, Button, StyleSheet, Image } from "react-native";
+import { View, Text, Button, StyleSheet, Image, ScrollView, RefreshControl } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../../context/auth";
 import axiosIntance, { updateToken } from "../../apis/axios";
@@ -20,6 +20,17 @@ const Profile = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [img, setImg] = useState(require('./img/default.png'))
   const nav = useNavigation();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getUserInfor();
+    wait(2000).then(() => setRefreshing(false));
+
+  }, []);
 
   const handbleLogout = async () => {
     setMessage("Logout of TodoApp?");
@@ -45,8 +56,9 @@ const Profile = () => {
       if (res.data.data[0].email) {
         setEmail(res.data.data[0].email);
       }
-      if (res.data.data[0].img) {
-        setImg(res.data.data[0].img);
+      if (res.data.data[0].avatar) {
+        setImg({uri: res.data.data[0].avatar});
+        console.log(res.data.data[0].avatar);
       }
       if (res.data.data[0].DateOfBirth) {
         setDateOfBirth(res.data.data[0].DateOfBirth);
@@ -62,7 +74,16 @@ const Profile = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}         
+    contentContainerStyle={styles.scrollView}
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    refreshControl={
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+    } >
       <View style={styles.header}>
         <Text style={{ color: "#ffffff", marginTop: 10, marginLeft: 10 }}>
           Profile
@@ -73,7 +94,8 @@ const Profile = () => {
           <View style={styles.img}>
             <Image
               style={{ width: 100, height: 100, borderRadius: 100 }}
-              source={img} />
+              source={img}
+               />
           </View>
           <View style={styles.info}>
             <View style={{ alignItems: "center" }}>
@@ -108,7 +130,7 @@ const Profile = () => {
         title=""
         message={message}
       />
-    </View>
+    </ScrollView>
   )
 }
 const styles = StyleSheet.create({

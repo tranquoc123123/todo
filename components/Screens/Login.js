@@ -37,7 +37,8 @@ const LoginScreen = ({ navigation }) => {
             setIsLoading(true);
             const res = await axiosIntance.post('user/login', {
                 email: username,
-                password: password
+                password: password,
+                fromWeb: "false"
             }).then(async(res)=>{
                 console.log(res.data.user);
                 await updateToken(res.data.token);

@@ -163,7 +163,7 @@ const DailyTask = ({ navigation }) => {
             </View>
             <View style={styles.timeTitle} >
               <View>
-                <Text>
+                <Text style={{color:"black"}}>
                   Start
                 </Text>
                 <Text>
@@ -171,7 +171,7 @@ const DailyTask = ({ navigation }) => {
                 </Text>
               </View>
               <View>
-                <Text>
+                <Text style={{color:"black"}}>
                   End
                 </Text>
                 <Text>
@@ -203,7 +203,7 @@ const DailyTask = ({ navigation }) => {
 
             </View>
             <View>
-              <Text>
+              <Text style={{color:"black"}}>
                 Description
               </Text>
             </View>

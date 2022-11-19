@@ -37,7 +37,7 @@ export default function App() {
   return (
     <AuthContext.Provider value={{ user: user, setUser: setUser }}>
       <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false, showLabel: false}}>
+      <Stack.Navigator screenOptions={{headerShown: false, showLabel: false}} >
         {user && <Stack.Screen name="Home" component={BottomTabBar} /> }
         {!user && <Stack.Screen name="LoginScreen"  component={LoginScreen}/>  }
         <Stack.Screen name="PriorityTask" component={PriorityTask} />

@@ -13,12 +13,10 @@ import axios from "axios";
 import { updateHeaderId } from '../../apis/axios';
 import { server } from '../../apis/server';
 import { Pressable } from 'react-native';
+import DocumentPicker from 'react-native-document-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import FormData from 'form-data';
 
-const todoItem = ({ item }) => {
-    return (
-        <TextInput value={item.title} />
-    );
-}
 
 const MyProfile = ({ navigation }) => {
     const [openStart, setOpenStart] = useState(false);
@@ -28,11 +26,13 @@ const MyProfile = ({ navigation }) => {
     const [message, setMessage] = useState();
     const [img, setImg] = useState(require('./img/default.png'))
     const [name, setName] = useState("Name");
+    const [userid, setUserID] = useState();
     const [email, setEmail] = useState("Email");
     const [dateOfBirth, setDateOfBirth] = useState(new Date());
     const [dateOfBirthStr, setDateOfBirthStr] = useState(new Date().toISOString().split('T')[0]);
     const [profession, setProfession] = useState("No info");
     const nav = useNavigation();
+    const [fileIMG, setFileIMG] = useState();
 
     const route = useRoute();
     const onChange = (event, selectedDate) => {
@@ -48,53 +48,130 @@ const MyProfile = ({ navigation }) => {
 
 
     const UpdateHandle = async () => {
-        // setIsLoading(true);
-        // if (await Validateting() === true) {
-        //     const res = await axiosIntance.put("/todo", {
-        //         title: title,
-        //         startdate: startDate,
-        //         enddate: endDate,
-        //         description: description
-        //     },
-        //         {
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'id': '6360986eab6b9925b4ceea2b',
-        //             }
-        //         },
-        //     ).then(res => {
-        //         updateTodoList();
-        //     }
-        //     ).catch(error => {
-        //         console.log(error);
-        //         setMessage(error.messaage);
-        //         setOK(true);
-        //     }).finally(() => {
-        //         // setIsLoading(false)
-        //         setOK(true);
-        //     });
-        // } else {
-        //     setOK(true);
-        // }
-        // setIsLoading(false);
+        setIsLoading(true);
+        let errcnt = 0;
+        if (await Validateting() === true) {
+            const res = await axiosIntance.put("/user", {
+                email: email,
+                username: name,
+                profession: profession,
+                DateOfBirth: dateOfBirth
+            },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'id': userid,
+                    }
+                },
+            ).then(res => {
+                // setMessage("Update is successfully!");
+                console.log("update info");
+            }
+            ).catch(err => {
+                // setMessage("Have a problem when update");
+                console.log("update failed");
+                errcnt++;
+            })
+        } else {
+            setOK(true);
+        }
+        if (fileIMG) {
+            const formData = new FormData();
+            formData.append("avatar", fileIMG);
+            // console.log(formData);
+            const res = await axiosIntance.post("/user/upload", formData,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        'content-type': 'multipart/form-data',
+                        'id': userid,
+                    }
+                },
+            ).then(res => {
+                console.log("update avatar");
+                // setMessage("Update is successfully!");
+                // setIsLoading(false);
+            }
+            ).catch(error => {
+                errcnt++;
+                console.log("update avatar failed");
+                // setMessage("Have a problem when update");
+                setOK(true);
+            })
+        }
+        if  (errcnt === 0) {
+            setMessage("Update is successfully!");
+        }else{
+            setMessage("Have a problem when update");
+            
+        }
+        // setOK(true);
+        setOK(true);
+        setIsLoading(false);
     };
 
-    const gotoProfile = () =>{
+    const gotoProfile = () => {
         nav.navigate("Profile");
     }
+
+    const validateUsername = (Inusername) => {
+        const reg = /^(([a-zA-Z](\s|\.)?)*){3,50}$/;
+        return reg.test(Inusername)
+    };
+
+    const validateEmail = (Inemail) => {
+        const reg = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+        return reg.test(Inemail);
+    };
 
     const Validateting = async () => {
         let result = true;
         let cnt = 0;
         if (!name) {
             result = false;
-             setMessage('Please input the name');
+            setMessage('Please input the name');
+        } else {
+            if (validateUsername(name) === false) {
+                result = false;
+                setMessage('User name is invalid');
+            }
         }
-        console.log(message);
+        if (!profession) {
+            result = false;
+            setMessage('Please input the profession');
+        }
+        if (!email) {
+            result = false;
+            setMessage('Please input the email');
+        } else {
+            if (validateEmail(email) === false) {
+                result = false;
+                setMessage('The email is invalid');
+            }
+        }
         return result;
-
     }
 
+    const selectOneFile = async () => {
+        //Opening Document Picker for selection of one file
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.images]
+            });
+            setFileIMG({uri : res[0].uri, name : res[0].name, type : res[0].type });
+            console.log(res[0]);
+            setImg({
+                uri: res[0].uri
+            });
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+            } else {
+                //For Unknown Error
+                alert('Unknown Error: ' + JSON.stringify(err.message));
+                throw err;
+            }
+        }
+    };
     const init = async () => {
         setDateOfBirth(new Date(route.params.dateofbirth));
         setDateOfBirthStr(new Date(route.params.dateofbirth).toISOString().split('T')[0]);
@@ -102,19 +179,7 @@ const MyProfile = ({ navigation }) => {
         setName(route.params.name);
         setProfession(route.params.profession);
         setImg(route.params.img);
-    }
-
-    const handlePress = async (text, id) => {
-        // console.log(e.value);
-        let items = [...listItem];
-        let item = await listItem.find(i => {
-            if (i._id === id) return true;
-        })
-        item.titleItem = text;
-        console.log(item);
-        let index = await listItem.findIndex(item => item._id === id);
-        items[index] = item;
-        setListItem(items);
+        setUserID(await AsyncStorage.getItem("userid"));
     }
 
     useEffect(() => {
@@ -131,7 +196,7 @@ const MyProfile = ({ navigation }) => {
             </View>
             <View style={styles.header}>
                 <View style={{ flex: 1 }}>
-                    <Pressable style={styles.buttonBack} onPress={()=>gotoProfile()}>
+                    <Pressable style={styles.buttonBack} onPress={() => gotoProfile()}>
                         <Icon name="arrow-left" color={color.Primary} size={20} />
                     </Pressable>
                 </View>
@@ -150,7 +215,14 @@ const MyProfile = ({ navigation }) => {
                     :
                     <View>
                         <View style={{ flexDirection: "row", justifyContent: "center", marginVertical: 20, alignItems: "center" }}>
-                            <Image  source={img} style={styles.img}/>
+                            <Pressable onPress={() => selectOneFile()}>
+                                <Image source={img} style={styles.img} />
+                                <View style={{ position: "absolute", height: "100%", width: "100%", marginLeft: -10, justifyContent: "flex-end", alignItems: "flex-end" }}>
+                                    <View style={{ borderWidth: 1, borderColor: color.Primary, borderRadius: 4, backgroundColor: "#ffffff" }}>
+                                        <Icon name="pen" color={color.Primary} size={20} />
+                                    </View>
+                                </View>
+                            </Pressable>
                         </View>
                         <View style={styles.index}>
                             <Text style={styles.indextext}>
@@ -164,8 +236,8 @@ const MyProfile = ({ navigation }) => {
                             </Text>
                             <TextInput placeholder='Profession' style={styles.input} defaultValue={profession} onChangeText={(text) => setProfession(text)} />
                         </View>
-                        <View style={[{ flexDirection: "row" },styles.index]}>
-                            <View style={{ flex: 1,  }}>
+                        <View style={[{ flexDirection: "row" }, styles.index]}>
+                            <View style={{ flex: 1, }}>
                                 <Text style={styles.indextext}>Date of Birth</Text>
                                 <InputDate date={dateOfBirthStr} onPress={() => { setOpenStart(true) }} />
                             </View>
@@ -174,7 +246,7 @@ const MyProfile = ({ navigation }) => {
                             <Text style={styles.indextext}>
                                 Email
                             </Text>
-                            <TextInput placeholder='Email' style={styles.input} defaultValue={email} onChangeText={(text) => setEmail(text)} />
+                            <TextInput  editable={false} placeholder='Email' style={styles.input} defaultValue={email} onChangeText={(text) => setEmail(text)} />
                         </View>
                         <View style={{ marginVertical: 20 }}>
                             <TouchableOpacity style={styles.buttonEnable} onPress={() => UpdateHandle()} >
@@ -281,7 +353,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15
     },
     img: {
-        height:100,
+        height: 100,
         width: 100,
         borderRadius: 100,
         borderWidth: 0.3,
