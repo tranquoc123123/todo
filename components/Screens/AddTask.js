@@ -257,6 +257,9 @@ const AddTask = ({ navigation }) => {
                                 <Text style={styles.indextext}>Start</Text>
                                 <InputDate date={startDateStr} onPress={() => { setOpenStart(true) }} />
                             </View>
+                            <View style={{flex: 0.1}}>
+
+                            </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.indextext}>Ends</Text>
                                 <InputDate date={endDateStr} onPress={() => { setOpenEnds(true) }} />

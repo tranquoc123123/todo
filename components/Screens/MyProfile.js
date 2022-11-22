@@ -237,7 +237,7 @@ const MyProfile = ({ navigation }) => {
                             <TextInput placeholder='Profession' style={styles.input} defaultValue={profession} onChangeText={(text) => setProfession(text)} />
                         </View>
                         <View style={[{ flexDirection: "row" }, styles.index]}>
-                            <View style={{ flex: 1, }}>
+                            <View style={{ width:"100%"}}>
                                 <Text style={styles.indextext}>Date of Birth</Text>
                                 <InputDate date={dateOfBirthStr} onPress={() => { setOpenStart(true) }} />
                             </View>
@@ -248,7 +248,7 @@ const MyProfile = ({ navigation }) => {
                             </Text>
                             <TextInput  editable={false} placeholder='Email' style={styles.input} defaultValue={email} onChangeText={(text) => setEmail(text)} />
                         </View>
-                        <View style={{ marginVertical: 20 }}>
+                        <View style={{ marginVertical: 20, justifyContent:"center", alignItems:"center" }}>
                             <TouchableOpacity style={styles.buttonEnable} onPress={() => UpdateHandle()} >
                                 {isLoading ?
                                     <ActivityIndicator size="large" color="#90EE90" /> :

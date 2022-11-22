@@ -35,10 +35,10 @@ const DailyTask = ({ navigation }) => {
   const [isOkBack, setOkBack] = useState(false);
   const [isComplete, setIsComplete] = useState(true);
 
-  const UpdateState = async () => {
+  const UpdateState = async (state) => {
     setIsLoading(true);
     console.log(idTask);
-    const res = await updateStatusTask(idTask, "yes").then(res => {
+    const res = await updateStatusTask(idTask, state).then(res => {
       setMessage("Update is successfully");
       setOkBack(true);
     }).catch(err => {
@@ -48,6 +48,7 @@ const DailyTask = ({ navigation }) => {
     setIsLoading(false)
 
   }
+  
 
   const gotoHome = () => {
     nav.navigate("Home");
@@ -62,7 +63,7 @@ const DailyTask = ({ navigation }) => {
   }
 
   const setHeader = async () => {
-    console.log(route.params.id);
+    // console.log(route.params.id);
     return { "id": route.params.id }
   }
 
@@ -213,11 +214,21 @@ const DailyTask = ({ navigation }) => {
               </Text>
             </View>
             {!isComplete &&
-              <Pressable style={styles.finishBtn} onPress={() => UpdateState()}>
+              <Pressable style={styles.finishBtn} onPress={() => UpdateState("yes")}>
                 {isLoading ?
                   <ActivityIndicator size="large" color="#90EE90" /> :
                   <Text style={styles.textBtn}>
                     Finish
+                  </Text>
+                }
+              </Pressable>
+            }
+            {isComplete &&
+              <Pressable style={styles.finishBtn} onPress={() => UpdateState("no")}>
+                {isLoading ?
+                  <ActivityIndicator size="large" color="#90EE90" /> :
+                  <Text style={styles.textBtn}>
+                    Redo
                   </Text>
                 }
               </Pressable>

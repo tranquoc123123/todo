@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     borderWidth: 0.2,
     borderRadius: 3,
-    marginRight: 10,
     height: 50,
     paddingLeft: 10,
     borderColor: color.Primary

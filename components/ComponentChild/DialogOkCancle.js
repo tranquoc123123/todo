@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback, Pressable, TextInput, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback, Pressable, TextInput, SafeAreaView, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from '../StyleSheet/color';
 import { Dialog } from 'react-native-simple-dialogs';
-const DialogConfirm = ({ message, onOk, onCancle,visible, title }) => {
+const DialogConfirm = ({ message, onOk, onCancle, visible, title, isHandlingOK }) => {
     return (
         <Dialog
             visible={visible}
@@ -14,10 +14,13 @@ const DialogConfirm = ({ message, onOk, onCancle,visible, title }) => {
         >
             <View style={styles.container}>
                 <Text style={{ color: color.Primary, fontSize: 16 }} color={color.Primary} > {message} </Text>
-                <TouchableOpacity onPress={() => {onOk()}} style={styles.button}>
-                    <Text style={{ color: "#ffffff" }}>OK</Text>
+                <TouchableOpacity onPress={() => { onOk() }} style={styles.button}>
+                    {isHandlingOK ?
+                        <ActivityIndicator size="large" color="#90EE90" /> :
+                        <Text style={{ color: "#ffffff" }}>OK </Text>
+                    }
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {onCancle()}} style={styles.button2}>
+                <TouchableOpacity onPress={() => { onCancle() }} style={styles.button2}>
                     <Text style={{ color: "black" }}>Cancle</Text>
                 </TouchableOpacity>
             </View>

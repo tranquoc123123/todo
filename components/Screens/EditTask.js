@@ -15,6 +15,7 @@ import { server } from '../../apis/server';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { parseToIcon } from '../ComponentChild/CommonFunction';
 import DialogBack from '../ComponentChild/DialogBack';
+import { Pressable } from 'react-native';
 const todoItem = ({ item }) => {
     return (
         <TextInput value={item.title} />
@@ -133,8 +134,9 @@ const EditTask = ({ navigation }) => {
 
 
     const getTask = async () => {
-        // await updateHeaderId('6360986eab6b9925b4ceea2b')
-        const res = await axios.create({ baseURL: server, headers: { "id": "637894be2eb156033334a4e5" } }).get("/todo/", {
+        // await updateHeaderId('6360986eab6b9925b4ceea2b');
+        const id = route.params.id;
+        const res = await axios.create({ baseURL: server, headers: { "id": id } }).get("/todo/", {
         }).then(res => {
             // console.log("res.data: ");
             // console.log( res.data[0]);
@@ -236,7 +238,7 @@ const EditTask = ({ navigation }) => {
                     </View>
                     <View style={styles.header}>
                         <View style={{ flex: 1 }}>
-                            <TouchableOpacity style={styles.buttonBack}>
+                            <TouchableOpacity style={styles.buttonBack} onPress={() => { nav.navigate("My Day") }}>
                                 <Icon name="arrow-left" color={color.Primary} size={20} />
                             </TouchableOpacity>
                         </View>
@@ -258,6 +260,8 @@ const EditTask = ({ navigation }) => {
                                     <Text style={styles.indextext}>Start</Text>
                                     <InputDate date={startDateStr} onPress={() => { setOpenStart(true) }} />
                                 </View>
+                                <View style={{ flex: 0.1 }}>
+                                </View>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.indextext}>Ends</Text>
                                     <InputDate date={endDateStr} onPress={() => { setOpenEnds(true) }} />
@@ -269,13 +273,16 @@ const EditTask = ({ navigation }) => {
                                 </Text>
                                 <TextInput placeholder='DESIGN' style={styles.input} defaultValue={title} onChangeText={(text) => setTitle(text)} />
                             </View>
-                            <View style={{ marginVertical: 10 }}>
-                                <Text style={styles.indextext}>
-                                    Category
-                                </Text>
-                                <TouchableOpacity style={styles.buttonEnable} >
-                                    <Text style={{ color: "#ffffff" }}>Priority Task</Text>
-                                </TouchableOpacity>
+                            <Text style={styles.indextext}>
+                                Category
+                            </Text>
+                            <View style={{ justifyContent: "center", alignItems: "center" }}>
+                                <Pressable style={styles.buttonEnable} >
+                                    {isPriority ?
+                                        <Text style={{ color: "#ffffff" }}>Priority Task</Text> :
+                                        <Text style={{ color: "#ffffff" }}>Daily Task</Text>
+                                    }
+                                </Pressable>
                             </View>
                             <View style={{ marginVertical: 10 }}>
                                 <Text style={styles.indextext}>
@@ -325,7 +332,7 @@ const EditTask = ({ navigation }) => {
                                     </View>
                                 </View>
                             }
-                            <View style={{ marginVertical: 20 }}>
+                            <View style={{ marginVertical: 20, justifyContent: "center", alignItems: "center" }}>
                                 <TouchableOpacity style={styles.buttonEnable} onPress={() => UpdateHandle()} >
                                     {isLoading ?
                                         <ActivityIndicator size="large" color="#90EE90" /> :

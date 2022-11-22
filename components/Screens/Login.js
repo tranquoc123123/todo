@@ -32,7 +32,6 @@ const LoginScreen = ({ navigation }) => {
 
     }
     const handbleSubmit = async (event) => {
-        event.preventDefault()
         if (submit) {
             setIsLoading(true);
             const res = await axiosIntance.post('user/login', {
@@ -40,13 +39,13 @@ const LoginScreen = ({ navigation }) => {
                 password: password,
                 fromWeb: "false"
             }).then(async(res)=>{
-                console.log(res.data.user);
+                // console.log(res);
                 await updateToken(res.data.token);
                 await AsyncStorage.setItem('token', res.data.token)
                 await AsyncStorage.setItem('username', res.data.username)
                 await AsyncStorage.setItem('userid', res.data.userId)
                 await userCtx.setUser(res.data.username);
-                await console.log('login with user: ' + res.data.username)
+                console.log('login with user: ' + res.data.username)
             }).
             catch(error => {
             // console.log(JSON.stringify(error));
@@ -55,9 +54,11 @@ const LoginScreen = ({ navigation }) => {
             }else {
                 setMessage(error.message);
             }
+            // console.log(error);
             //setMessage(' Email or password is invalid!');
             // console.log('error status: ');
             // console.log(error.response.status);
+            console.log(error.message);
             setError(true); 
             setIsLoading(false)})
             setIsLoading(false);

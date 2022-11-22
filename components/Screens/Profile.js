@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { View, Text, Button, StyleSheet, Image, ScrollView, RefreshControl } from "react-native";
+import { View, Text, Button, StyleSheet, Image, ScrollView, RefreshControl, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../../context/auth";
 import axiosIntance, { updateToken } from "../../apis/axios";
@@ -21,6 +21,7 @@ const Profile = () => {
   const [img, setImg] = useState(require('./img/default.png'))
   const nav = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
+  const [isGetting, setIsGetting] = useState(true);
 
   const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -41,7 +42,7 @@ const Profile = () => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('username');
     await AsyncStorage.removeItem('userid');
-     userCtx.setUser(null);
+    userCtx.setUser(null);
   };
   const getUserInfor = async () => {
     const userid = await AsyncStorage.getItem("userid");
@@ -57,7 +58,7 @@ const Profile = () => {
         setEmail(res.data.data[0].email);
       }
       if (res.data.data[0].avatar) {
-        setImg({uri: res.data.data[0].avatar});
+        setImg({ uri: res.data.data[0].avatar });
         console.log(res.data.data[0].avatar);
       }
       if (res.data.data[0].DateOfBirth) {
@@ -71,58 +72,66 @@ const Profile = () => {
 
   useEffect(() => {
     getUserInfor();
+    setIsGetting(false);
   }, []);
 
   return (
-    <ScrollView style={styles.container}         
-    contentContainerStyle={styles.scrollView}
-    showsVerticalScrollIndicator={false}
-    showsHorizontalScrollIndicator={false}
-    refreshControl={
-      <RefreshControl
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-      />
-    } >
-      <View style={styles.header}>
-        <Text style={{ color: "#ffffff", marginTop: 10, marginLeft: 10 }}>
-          Profile
-        </Text>
-      </View>
-      <View style={styles.containerSub}>
-        <View style={styles.body}>
-          <View style={styles.img}>
-            <Image
-              style={{ width: 100, height: 100, borderRadius: 100 }}
-              source={img}
-               />
-          </View>
-          <View style={styles.info}>
-            <View style={{ alignItems: "center" }}>
-              <Text style={styles.name}>
-                {name}
-              </Text>
-              <Text>
-                {profession}
-              </Text>
+    <ScrollView style={styles.container}
+      contentContainerStyle={styles.scrollView}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      } >
+      {isGetting ?
+        <View style={{ flex: 1, height: 500 }}>
+          <ActivityIndicator size="large" color={color.Secondary} style={{ flex: 1 }} />
+        </View> :
+      <View >
+        <View style={styles.header}>
+          <Text style={{ color: "#ffffff", marginTop: 10, marginLeft: 10 }}>
+            Profile
+          </Text>
+        </View>
+        <View style={styles.containerSub}>
+          <View style={styles.body}>
+            <View style={styles.img}>
+              <Image
+                style={{ width: 100, height: 100, borderRadius: 100 }}
+                source={img}
+              />
             </View>
-            <View style={{ paddingHorizontal: 10 }}>
-              <Pressable style={styles.index} onPress={() => { nav.navigate("MyProfile", { email: email, dateofbirth: dateOfBirth, name: name, profession: profession, img: img }) }}>
-                <Icon name="user-alt" size={20} style={styles.icon} />
-                <Text style={styles.text}> Profile </Text>
-              </Pressable>
-              <Pressable style={styles.index} onPress={() => { }}>
-                <Icon name="chart-pie" size={20} style={styles.icon} />
-                <Text style={styles.text}> Static </Text>
-              </Pressable>
-              <Pressable style={styles.index} onPress={() => { handbleLogout() }}>
-                <Icon name="door-open" size={20} style={styles.icon} />
-                <Text style={styles.text}> Logout </Text>
-              </Pressable>
+            <View style={styles.info}>
+              <View style={{ alignItems: "center" }}>
+                <Text style={styles.name}>
+                  {name}
+                </Text>
+                <Text>
+                  {profession}
+                </Text>
+              </View>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Pressable style={styles.index} onPress={() => { nav.navigate("MyProfile", { email: email, dateofbirth: dateOfBirth, name: name, profession: profession, img: img }) }}>
+                  <Icon name="user-alt" size={20} style={styles.icon} />
+                  <Text style={styles.text}> Profile </Text>
+                </Pressable>
+                <Pressable style={styles.index} onPress={() => { }}>
+                  <Icon name="chart-pie" size={20} style={styles.icon} />
+                  <Text style={styles.text}> Static </Text>
+                </Pressable>
+                <Pressable style={styles.index} onPress={() => { handbleLogout() }}>
+                  <Icon name="door-open" size={20} style={styles.icon} />
+                  <Text style={styles.text}> Logout </Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         </View>
       </View>
+      }
       <DialogConfirm
         visible={showDialog}
         onCancle={() => setShowDialog(false)}
@@ -136,6 +145,7 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: "100%"
   },
   containerSub: {
     flex: 1,

@@ -173,9 +173,6 @@ const Home = ({ navigation }) => {
       "userId": userid
     };
     const res = await axios.create({ baseURL: server, headers: config }).get("/todo", {
-      // params:{
-      //     id: "62fbcb17e8588f32cbea05b7"
-      // }
     }).then(
       res => {
         if (res.data) {
@@ -227,7 +224,7 @@ const Home = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.header1}>
-          <Text style={{ fontSize: 32, fontFamily: 'Poppins', color: color.Secondary, fontWeight: 'bold' }}>Welcome {username}</Text>
+          <Text style={{ fontSize:25, fontFamily: 'Poppins', color: color.Secondary, fontWeight: 'bold' }}>Welcome {username}</Text>
           <Text style={{ fontSize: 16, fontFamily: 'Poppins', color: 'gray' }}>Have a nice day !</Text>
         </View>
         {isLoading ?
