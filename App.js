@@ -18,6 +18,7 @@ import MyProfile from './components/Screens/MyProfile';
 import Profile from './components/Screens/Profile';
 import AddTask from './components/Screens/AddTask';
 import EditTask from './components/Screens/EditTask';
+import Statistic from './components/Screens/Statistic';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs()
 export default function App() {
@@ -37,16 +38,19 @@ export default function App() {
   return (
     <AuthContext.Provider value={{ user: user, setUser: setUser }}>
       <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false, showLabel: false}} >
-        {user && <Stack.Screen name="Home" component={BottomTabBar} /> }
-        {!user && <Stack.Screen name="LoginScreen"  component={LoginScreen}/>  }
-        <Stack.Screen name="PriorityTask" component={PriorityTask} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="DailyTask" component={DailyTask} />
-        <Stack.Screen name="MyProfile" component={MyProfile} />
-        <Stack.Screen name="AddTask" component={AddTask} />
-        <Stack.Screen name="EditTask" component={EditTask} />
-      </Stack.Navigator>
+        <Stack.Navigator screenOptions={{headerShown: false, showLabel: false}} >
+          <Stack.Screen name="Home" component={BottomTabBar} />
+          {/* {user && <Stack.Screen name="Home" component={BottomTabBar} /> }
+          {!user && <Stack.Screen name="LoginScreen"  component={LoginScreen}/>  } */}
+          <Stack.Screen name="PriorityTask" component={PriorityTask} />
+          <Stack.Screen name="Register" component={Register} />
+          <Stack.Screen name="DailyTask" component={DailyTask} />
+          <Stack.Screen name="MyProfile" component={MyProfile} />
+          <Stack.Screen name="AddTask" component={AddTask} />
+          <Stack.Screen name="EditTask" component={EditTask} />
+          <Stack.Screen name="Statistic" component={Statistic} />
+
+        </Stack.Navigator>
       </NavigationContainer>
     </AuthContext.Provider>
 
