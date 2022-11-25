@@ -108,7 +108,7 @@ export default styles = StyleSheet.create({
   },
   textBlock: {
     color: color.Primary,
-    fontWeight: 'bold'
+    fontWeight: '500'
   }
 
 
