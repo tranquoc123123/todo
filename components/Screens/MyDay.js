@@ -67,7 +67,7 @@ const parseToIcon = (text) => {
 
 
 const width = Dimensions.get('window').width;
-const ITEM_SIZE = width * 0.167;
+const ITEM_SIZE = width * 0.2;
 const ITEM_SPACING = (width - ITEM_SIZE) / 2;
 
 function getDaysInMonth(month, year) {
@@ -89,12 +89,7 @@ const convertNumberToDate = {
   5: 'Sat',
   6: 'Sun',
 }
-const DAYS_IN_MONTH = getDaysInMonth(10, 2022).map((item) => {
-  return {
-    title: convertNumberToDate[new Date(item).getDay()],
-    content: new Date(item).getDate()
-  }
-});
+
 
 export default function MyDay() {
 
@@ -116,18 +111,17 @@ export default function MyDay() {
   const nav = useNavigation();
   const route = useRoute();
   const [date, setDate] = useState(new Date());
+  const [canmomentum, setCanMomentum] = useState(false);
+  const [day, setDay] = useState(new Date().getUTCDate());
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [year, setYear] = useState(new Date().getFullYear());
 
-  const showPicker = useCallback((value) => setShow(value), []);
-
-  const onValueChange = useCallback(
-    (event, newDate) => {
-      const selectedDate = newDate || date;
-
-      showPicker(false);
-      setDate(selectedDate);
-    },
-    [date, showPicker],
-  );
+  const DAYS_IN_MONTH = getDaysInMonth(month, year).map((item) => {
+    return {
+      title: convertNumberToDate[new Date(item).getDay()],
+      content: new Date(item).getDate()
+    }
+  });
 
   const HandlePressDetail = (id, type) => {
     setShowDialogEdit(true);
@@ -179,9 +173,9 @@ export default function MyDay() {
 
   const HandleDeleteData = async () => {
     setDeleting(true);
-    const res = await axios.create({ baseURL: server}).delete("/todo/" +id).then(res=>{
+    const res = await axios.create({ baseURL: server }).delete("/todo/" + id).then(res => {
       HandleAfterDel();
-    }).catch(err=>{
+    }).catch(err => {
       setMessage("Delete is fail, try again!");
       setShowDialogConfirm(false);
       setShowDialogEdit(false);
@@ -189,7 +183,7 @@ export default function MyDay() {
       setShowDialogOk(true);
       setDeleting(false);
     });
-    
+
   }
 
   const renderPriority = ({ item, index }) => {
@@ -231,6 +225,9 @@ export default function MyDay() {
     )
   };
 
+  const setDateFunc = async (selectDate) => {
+    setDate(selectDate);
+  }
 
   const setStatusActive = status => {
     setStatus(status);
@@ -251,11 +248,18 @@ export default function MyDay() {
     },
   };
   useEffect(() => {
-    getData()
+    const numday = date.getUTCDate();
+    setActiveIndex(numday - 1);
+    // calendarRef.current.scrollToIndex({ index: numday-1, animated: true });
+    getData();
   }, []);
   const getData = async () => {
     const userid = await AsyncStorage.getItem("userid");
-    const config = { "userid": userid };
+    const fromdateTmp = date.setHours(0, 0, 0, 0);
+    const todateTmp = date.setHours(23, 59, 59, 999);
+    const fromdate = new Date(fromdateTmp);
+    const todate = new Date(todateTmp);
+    const config = { "userid": userid, "fromdate": fromdate, "todate": todate, };
     axios.create({ baseURL: server, headers: config }).get("/todo", {
       // params:{
       //     id: "62fbcb17e8588f32cbea05b7"
@@ -292,7 +296,7 @@ export default function MyDay() {
             justifyContent: 'center',
             alignItems: 'center'
           }}
-          onPress= {()=>{setShowCalander(true)}}
+            onPress={() => { setShowCalander(true) }}
           >
             <Icon name={'calendar-alt'} color={'#223671'} size={25} />
             <View>
@@ -330,15 +334,42 @@ export default function MyDay() {
           bounces={false}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: true }
+            {
+              useNativeDriver: true,
+              listener: (event) => {
+                setCanMomentum(true);
+              },
+            },
           )}
           contentContainerStyle={{ paddingHorizontal: ITEM_SPACING }}
           snapToInterval={DAYS_IN_MONTH.length}
           decelerationRate="normal"
           style={{ flexGrow: 0 }}
           onMomentumScrollEnd={(ev) => {
-            const index = Math.round(ev.nativeEvent.contentOffset.x / ITEM_SIZE);
-            setActiveIndex(index);
+            if (canmomentum) {
+              const index = Math.round(ev.nativeEvent.contentOffset.x / ITEM_SIZE);
+              console.log(index);
+              const selectDate = new Date(year, month, index);
+              console.log(selectDate.toDateString());
+              console.log(date.toDateString());
+              setDate(new Date( 2022, 1 ,1));
+              console.log(date.getUTCDate());
+              setActiveIndex(index);
+              console.log("active index:" + activeIndex);
+              // const wait = new Promise(resolve => setTimeout(resolve, 2000));
+              // wait.then(() => {
+              // });
+              // console.log(date.toDateString());
+              console.log("getting data...")
+              getData();
+            }
+            setCanMomentum(false);
+          }}
+          onLayout={info => {
+            const wait = new Promise(resolve => setTimeout(resolve, 500));
+            wait.then(() => {
+              calendarRef.current?.scrollToIndex({ index: activeIndex - 2, animated: true });
+            });
           }}
           renderItem={({ item, index }) => {
             const { title, content } = item;
