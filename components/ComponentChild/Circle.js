@@ -11,9 +11,6 @@ const { width, height } = Dimensions.get('window');
 
 const Circle = (props) => {
 
-  const x = props.rate;
-  // console.log(typeof x)
-
   return (
     <View style={{
       // backgroundColor: 'green',
@@ -26,7 +23,7 @@ const Circle = (props) => {
 
     }}>
       <View>
-        <Text style={{fontSize: 15, fontWeight: 'bold', color: '#000', marginBottom: 10}}>{props.month}</Text>
+        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#000', marginBottom: 10 }}>{props.month}</Text>
       </View>
 
 
@@ -51,10 +48,12 @@ const Circle = (props) => {
           strokeDasharray={props.rate}
         />
         <Text style={{
-          position: 'absolute', 
+          position: 'absolute',
           marginTop: 32,
           marginLeft: 39,
-        }}>{props.rateIn}</Text>
+        }}>
+          {props.rateIn}
+        </Text>
 
 
 

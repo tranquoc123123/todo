@@ -22,27 +22,27 @@ const Statistic = (props) => {
     2: {
       id: 2,
       title: 'February',
-      rate: 86
+      rate: 78
     },
     3: {
       id: 3,
       title: 'March',
-      rate: 77
+      rate: 99
     },
     4: {
       id: 4,
       title: 'April',
-      rate: 70
+      rate: 30
     },
     5: {
       id: 5,
       title: 'May',
-      rate: 80
+      rate: 68
     },
     6: {
       id: 6,
       title: 'June',
-      rate: 18
+      rate: 80
     },
     7: {
       id: 7,
