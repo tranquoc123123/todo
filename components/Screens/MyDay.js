@@ -349,10 +349,10 @@ export default function MyDay() {
             if (canmomentum) {
               const index = Math.round(ev.nativeEvent.contentOffset.x / ITEM_SIZE);
               console.log(index);
-              const selectDate = new Date(year, month, index);
+              const selectDate = new Date(year, month, index + 1);
               console.log(selectDate.toDateString());
               console.log(date.toDateString());
-              setDate(new Date( 2022, 1 ,1));
+              setDate(selectDate);
               console.log(date.getUTCDate());
               setActiveIndex(index);
               console.log("active index:" + activeIndex);
