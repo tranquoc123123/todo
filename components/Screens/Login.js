@@ -49,11 +49,12 @@ const LoginScreen = ({ navigation }) => {
             }).
             catch(error => {
             // console.log(JSON.stringify(error));
-            if (error.response.status === 409) {
-                setMessage('Email or password is invalid');
-            }else {
-                setMessage(error.message);
-            }
+            // if (error.response.status === 409) {
+            //     setMessage('Email or password is invalid');
+            // }else {
+            //     setMessage(error.message);
+            // }
+            setMessage('Email or password is invalid');
             // console.log(error);
             //setMessage(' Email or password is invalid!');
             // console.log('error status: ');

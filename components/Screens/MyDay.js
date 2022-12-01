@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Text, View, SafeAreaView, Dimensions, Animated, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { Text, View, SafeAreaView, Dimensions, Animated, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 
 import styles from '../StyleSheet/MydayStyle';
 import color from '../StyleSheet/color';
@@ -19,6 +19,8 @@ import { set } from 'immer/dist/internal';
 import { useRoute } from '@react-navigation/native';
 import DialogConfirm from '../ComponentChild/DialogOkCancle';
 import DialogCustom from '../ComponentChild/Dialog';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 // import MonthPicker from 'react-native-month-year-picker';
 // import { ACTION_DATE_SET, ACTION_DISMISSED, ACTION_NEUTRAL } from 'react-native-month-year-picker';
 
@@ -96,7 +98,7 @@ export default function MyDay() {
   const calendarRef = React.useRef();
   const scrollX = React.useRef(new Animated.Value(0)).current;
 
-  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [activeIndex, setActiveIndex] = React.useState(new Date().getUTCDate() - 1);
   const [status, setStatus] = useState(0);
   const [id, setId] = useState();
   const [priority, setPriority] = useState([]);
@@ -106,6 +108,7 @@ export default function MyDay() {
   const [showDialogOk, setShowDialogOk] = useState(false);
   const [showCalander, setShowCalander] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [isGetting, setIsGetting] = useState(false);
   const [isPriority, setIsPriority] = useState(false);
   const [message, setMessage] = useState();
   const nav = useNavigation();
@@ -115,6 +118,82 @@ export default function MyDay() {
   const [day, setDay] = useState(new Date().getUTCDate());
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
+  const [dateStr, setDateStr] = useState(new Date().toISOString().split('T')[0]);
+  const [openStart, setOpenStart] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  const toMonthText = (month) => {
+    var monthText = "Jan";
+    switch (month) {
+      case 0:
+        monthText = 'Jan';
+        break;
+
+      case 1:
+        monthText = "Feb";
+        break;
+      case 2:
+        monthText = "Mar";
+        break;
+      case 3:
+        monthText = "Apr";
+        break;
+      case 4:
+        monthText = "May";
+        break;
+      case 5:
+        monthText = "June";
+        break;
+      case 6:
+        monthText = "July";
+        break;
+      case 7:
+        monthText = "Aug";
+        break;
+      case 8:
+        monthText = "Sep";
+        break;
+      case 9:
+        monthText = "Oct";
+        break;
+      case 10:
+        monthText = "Nov";
+        break;
+      case 11:
+        monthText = "Dec";
+        break;
+
+      default:
+        monthText = 'Jan';
+    }
+    return monthText;
+  }
+
+  const onChange = (event, selectedDate) => {
+    // const currentDate = selectedDate || date;
+    // setDate(currentDate);
+    if (openStart === true) {
+      setOpenStart(Platform.OS === 'ios');
+      console.log("date: " + date);
+      const currentDate = selectedDate || date;
+      currentDate.setHours(0,0,0,0);
+      setMonth(currentDate.getMonth());
+      setYear(currentDate.getFullYear());
+      setActiveIndex(currentDate.getUTCDate() - 1);
+      setDate(currentDate);
+      console.log("currentDate: " + currentDate.toDateString());
+      // calendarRef.current?.scrollToIndex({ index: ((activeIndex - 2) >= 0) ? activeIndex - 2 : 0, animated: true }); 
+    }
+  };
 
   const DAYS_IN_MONTH = getDaysInMonth(month, year).map((item) => {
     return {
@@ -248,17 +327,20 @@ export default function MyDay() {
     },
   };
   useEffect(() => {
-    const numday = date.getUTCDate();
-    setActiveIndex(numday - 1);
-    // calendarRef.current.scrollToIndex({ index: numday-1, animated: true });
+    //calendarRef.current?.scrollToIndex({ index: ((activeIndex - 2) > 0) ? activeIndex - 2 : 0, animated: true });
     getData();
-  }, []);
+    calendarRef.current.scrollToOffset({
+      offset: activeIndex * ITEM_SIZE
+    })
+  }, [date, refreshing]);
   const getData = async () => {
+    setIsGetting(true);
     const userid = await AsyncStorage.getItem("userid");
     const fromdateTmp = date.setHours(0, 0, 0, 0);
     const todateTmp = date.setHours(23, 59, 59, 999);
     const fromdate = new Date(fromdateTmp);
     const todate = new Date(todateTmp);
+    console.log("select data with: " + date.toDateString());
     const config = { "userid": userid, "fromdate": fromdate, "todate": todate, };
     axios.create({ baseURL: server, headers: config }).get("/todo", {
       // params:{
@@ -273,11 +355,20 @@ export default function MyDay() {
     ).catch(error => {
       console.log(error)
     }).finally(() => {
-
+      setIsGetting(false);
     });
   }
   return (
-    <ScrollView >
+    <ScrollView 
+      contentContainerStyle={styles.scrollView}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      }>
       <SafeAreaView style={{
         paddingRight: 10,
         paddingLeft: 10,
@@ -296,7 +387,7 @@ export default function MyDay() {
             justifyContent: 'center',
             alignItems: 'center'
           }}
-            onPress={() => { setShowCalander(true) }}
+            onPress={() => { setOpenStart(true) }}
           >
             <Icon name={'calendar-alt'} color={'#223671'} size={25} />
             <View>
@@ -306,7 +397,7 @@ export default function MyDay() {
                 textDecorationLine: 'underline',
                 paddingLeft: 5
               }}>
-                Nov, 2022
+                {toMonthText(month)}, {year}
               </Text>
             </View>
           </TouchableOpacity>
@@ -341,29 +432,27 @@ export default function MyDay() {
               },
             },
           )}
+          onScrollToIndexFailed={info => {
+            const wait = new Promise(resolve => setTimeout(resolve, 700));
+            wait.then(() => {
+              fListRef.current?.scrollToIndex({ index: info.index, animated: true });
+            });
+          }}
           contentContainerStyle={{ paddingHorizontal: ITEM_SPACING }}
           snapToInterval={DAYS_IN_MONTH.length}
           decelerationRate="normal"
           style={{ flexGrow: 0 }}
           onMomentumScrollEnd={(ev) => {
             if (canmomentum) {
-              const index = Math.round(ev.nativeEvent.contentOffset.x / ITEM_SIZE);
-              console.log(index);
-              const selectDate = new Date(year, month, index + 1);
-              console.log(selectDate.toDateString());
-              console.log(date.toDateString());
-              setDate(selectDate);
-              console.log(date.getUTCDate());
-              setActiveIndex(index);
-              console.log("active index:" + activeIndex);
-              // const wait = new Promise(resolve => setTimeout(resolve, 2000));
+              setCanMomentum(false);
+              // const index = Math.round(ev.nativeEvent.contentOffset.x / ITEM_SIZE);
+              // const selectDate = new Date(year, month, index + 1);
+              // const wait = new Promise(resolve => setTimeout(resolve, 200));
               // wait.then(() => {
+              //   setDate(selectDate);
+              //   setActiveIndex(index);
               // });
-              // console.log(date.toDateString());
-              console.log("getting data...")
-              getData();
             }
-            setCanMomentum(false);
           }}
           onLayout={info => {
             const wait = new Promise(resolve => setTimeout(resolve, 500));
@@ -409,9 +498,13 @@ export default function MyDay() {
 
                 }}
                   onPress={() => {
-                    calendarRef.current.scrollToOffset({
-                      offset: index * ITEM_SIZE
-                    })
+                    // calendarRef.current.scrollToOffset({
+                    //   offset: index * ITEM_SIZE
+                    // })
+                    setActiveIndex(index);
+                    const selectDate = new Date(year, month, index + 1);
+                    selectDate.setHours(0,0,0,0)
+                    setDate(selectDate);
                   }}
                 >
                   <Text>
@@ -431,6 +524,9 @@ export default function MyDay() {
           showsHorizontalScrollIndicator={false}
         />
         {/* <TabListView /> */}
+        <View style={{ width: "100%", height: 25 }}>
+          {isGetting && <ActivityIndicator size="large" color={color.Secondary} />}
+        </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           {
             Object.keys(listTab).map(item => (
@@ -474,6 +570,20 @@ export default function MyDay() {
           onPressHandle={() => { setShowDialogOk(false) }}
           visible={showDialogOk}
         />
+        {
+          openStart && (<DateTimePicker
+            testID="dateTimePicker"
+            timeZoneOffsetInMinutes={0}
+            value={date}
+            mode="date"
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+            buttonTextColorIOS={color.Primary}
+            accentColor={color.Primary}
+          />)
+
+        }
         {/* {showCalander && (
           <MonthPicker
             onChange={onValueChange}

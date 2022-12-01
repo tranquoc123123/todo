@@ -97,6 +97,7 @@ const EditTask = ({ navigation }) => {
         setIsLoading(true);
         if (await Validateting() === true) {
             const body = {};
+            const id = route.params.id;
             body.title = title;
             body.startdate = new Date(startDate.setHours(0, 0, 0, 0));
             body.enddate = new Date(endDate.setHours(23, 59, 59, 999));
@@ -109,7 +110,7 @@ const EditTask = ({ navigation }) => {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'id': '6360986eab6b9925b4ceea2b',
+                        'id': id,
                     }
                 },
             ).then(res => {
@@ -136,6 +137,7 @@ const EditTask = ({ navigation }) => {
     const getTask = async () => {
         // await updateHeaderId('6360986eab6b9925b4ceea2b');
         const id = route.params.id;
+        console.log("taskid: " + id);
         const res = await axios.create({ baseURL: server, headers: { "id": id } }).get("/todo/", {
         }).then(res => {
             // console.log("res.data: ");

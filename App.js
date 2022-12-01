@@ -18,6 +18,7 @@ import MyProfile from './components/Screens/MyProfile';
 import Profile from './components/Screens/Profile';
 import AddTask from './components/Screens/AddTask';
 import EditTask from './components/Screens/EditTask';
+import Statistic from './components/Screens/Statistic';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs()
 export default function App() {
@@ -46,6 +47,7 @@ export default function App() {
         <Stack.Screen name="MyProfile" component={MyProfile} />
         <Stack.Screen name="AddTask" component={AddTask} />
         <Stack.Screen name="EditTask" component={EditTask} />
+        <Stack.Screen name="Statistic" component={Statistic} />
       </Stack.Navigator>
       </NavigationContainer>
     </AuthContext.Provider>

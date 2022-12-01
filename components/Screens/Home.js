@@ -136,8 +136,8 @@ const Home = ({ navigation }) => {
   }
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    getTask();
-    getDailyTask();
+    // getTask();
+    // getDailyTask();
     wait(2000).then(() => setRefreshing(false));
 
   }, []);
@@ -203,7 +203,7 @@ const Home = ({ navigation }) => {
     getTask();
     getDailyTask();
     setIsLoading(false)
-  }, [])
+  }, [refreshing])
   return (
     <View style={styles.container} >
       <ScrollView

@@ -118,9 +118,9 @@ const Profile = () => {
                   <Icon name="user-alt" size={20} style={styles.icon} />
                   <Text style={styles.text}> Profile </Text>
                 </Pressable>
-                <Pressable style={styles.index} onPress={() => { }}>
+                <Pressable style={styles.index} onPress={() => { nav.navigate('Statistic')}}>
                   <Icon name="chart-pie" size={20} style={styles.icon} />
-                  <Text style={styles.text}> Static </Text>
+                  <Text style={styles.text}> Statistic  </Text>
                 </Pressable>
                 <Pressable style={styles.index} onPress={() => { handbleLogout() }}>
                   <Icon name="door-open" size={20} style={styles.icon} />
