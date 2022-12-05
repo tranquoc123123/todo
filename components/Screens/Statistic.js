@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, View, Text, Dimensions, Touchable, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Circle from "../ComponentChild/Circle";
@@ -6,12 +6,16 @@ import color from "../StyleSheet/color";
 import styles from "../StyleSheet/StatisticStyle";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { server } from "../../apis/server";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const Statistic = (props) => {
+  const [statistic, setStatistic] = useState([]);
   const nav = useNavigation();
   const data = {
     1: {
@@ -75,8 +79,30 @@ const Statistic = (props) => {
       rate: 22
     },
   };
+  const statisticData = {}
+  
+  useEffect(() => {
+    fetch("https://backendtodo123.herokuapp.com/todo/statistic")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setIsLoaded(true);
+          setItems(result);
+          console.log(result);
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      )
+  }, []);
 
-  console.log(typeof data[Number(1)].rate);
+
+
+  // console.log(typeof data[Number(1)].rate);
 
   return (
     <SafeAreaView>
@@ -193,7 +219,7 @@ const Statistic = (props) => {
             </View>
 
             <View style={styles.flexRow}>
-              <Circle
+              <Circle 
                 rate={String(data[Number(11)].rate) + ',' + '100'}
                 rateIn={String(data[Number(11)].rate) + '%'} 
                 month={data[Number(11)].title}
