@@ -132,7 +132,7 @@ export default function MyDay() {
   }, []);
 
   const toMonthText = (month) => {
-    var monthText = "Jan";
+  var monthText = "Jan";
     switch (month) {
       case 0:
         monthText = 'Jan';
@@ -185,7 +185,7 @@ export default function MyDay() {
       setOpenStart(Platform.OS === 'ios');
       console.log("date: " + date);
       const currentDate = selectedDate || date;
-      currentDate.setHours(0,0,0,0);
+      currentDate.setHours(0, 0, 0, 0);
       setMonth(currentDate.getMonth());
       setYear(currentDate.getFullYear());
       setActiveIndex(currentDate.getUTCDate() - 1);
@@ -359,7 +359,7 @@ export default function MyDay() {
     });
   }
   return (
-    <ScrollView 
+    <ScrollView
       contentContainerStyle={styles.scrollView}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
@@ -503,7 +503,7 @@ export default function MyDay() {
                     // })
                     setActiveIndex(index);
                     const selectDate = new Date(year, month, index + 1);
-                    selectDate.setHours(0,0,0,0)
+                    selectDate.setHours(0, 0, 0, 0)
                     setDate(selectDate);
                   }}
                 >

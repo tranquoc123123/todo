@@ -234,7 +234,7 @@ const Home = ({ navigation }) => {
           <View>
             <View style={styles.cardContainer1} >
               <Text style={{ fontSize: 20, fontFamily: 'Poppins', color: color.Primary, fontWeight: 'bold' }} >My Priority Task</Text>
-              <ScrollView horizontal={true} style={{ width: "100%" }}>
+              <ScrollView horizontal={true} style={{ width: "100%", height: 200 }}>
                 <FlatList
                   style={styles.cardList}
                   horizontal

@@ -59,8 +59,7 @@ export default styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: width / 7,
-    marginVertical: height / 70,
-
+    marginVertical: height / 90,
   },
   month: {
     flexDirection: "row",
@@ -86,7 +85,7 @@ export default styles = StyleSheet.create({
     alignItems: "center"
   },
   totalContainer: {
-    justifyContent: 'space-between',
+    justifyContent: "space-evenly",
     alignItems: 'center',
     flexDirection: "row",
     paddingHorizontal: width/12,
@@ -100,7 +99,8 @@ export default styles = StyleSheet.create({
     width: 150,
     // backgroundColor: 'gray',
     borderRadius: 20,
-    borderWidth: 1
+    borderWidth: 1,
+    marginHorizontal: 10
   },
   numberBlock: {
     fontSize: 50,
