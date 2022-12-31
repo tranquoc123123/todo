@@ -435,7 +435,7 @@ export default function MyDay() {
           onScrollToIndexFailed={info => {
             const wait = new Promise(resolve => setTimeout(resolve, 700));
             wait.then(() => {
-              fListRef.current?.scrollToIndex({ index: info.index, animated: true });
+              calendarRef.current?.scrollToIndex({ index: info.index, animated: true });
             });
           }}
           contentContainerStyle={{ paddingHorizontal: ITEM_SPACING }}
