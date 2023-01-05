@@ -95,20 +95,11 @@ const Register = ({ navigation }) => {
                     email: email,
                     role: 'user'
                 }).then(async (res) => {
-                    const resLogin = await axiosIntance.post('user/login', {
-                        email: email,
-                        password: password
-                    }).then(async (res) => {
-                        // await updateToken(res.data);
-                        // console.log('resLogin.token: ' + resLogin.token);
-                        // await AsyncStorage.setItem('token', res.data.token);
-                        // await AsyncStorage.setItem('username', res.data.username);
-                        await setLogin(true);
-                        await setIsLoading(false);
-                    }
-                    )
+                    setLogin(true);
+                    setIsLoading(false);
                 }).catch(error => {
                     // setMessage(error.message);
+                    console.log(error);
                     if (error.response.status === 409) {
                         setMessage(' Email is already in use');
                     } else {

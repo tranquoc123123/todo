@@ -51,7 +51,7 @@ const MyProfile = ({ navigation }) => {
         setIsLoading(true);
         let errcnt = 0;
         if (await Validateting() === true) {
-            const res = await axiosIntance.put("/user", {
+            const res = await axiosIntance.put("/user/"+userid, {
                 email: email,
                 username: name,
                 profession: profession,
@@ -67,9 +67,12 @@ const MyProfile = ({ navigation }) => {
                 // setMessage("Update is successfully!");
                 console.log("update info");
             }
-            ).catch(err => {
+            ).then({
+                
+            })
+            .catch(err => {
                 // setMessage("Have a problem when update");
-                console.log("update failed");
+                console.log(err);
                 errcnt++;
             })
         } else {
